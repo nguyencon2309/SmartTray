@@ -34,7 +34,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
-    Button galleryBtn, cameraBtn;
+    Button galleryBtn, cameraBtn, analystBtn;
     Uri image_uri;
 
 
@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         galleryBtn = findViewById(R.id.button);
         cameraBtn = findViewById(R.id.button2);
+        analystBtn = findViewById(R.id.button3);
 
         //TODO ask for permission of camera upon first launch of application
 
@@ -119,6 +120,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     openCamera();
                 }
+
+            }
+        });
+
+        analystBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
             }
         });
@@ -191,6 +199,13 @@ public class MainActivity extends AppCompatActivity {
         rotationMatrix.setRotate(orientation);
         Bitmap cropped = Bitmap.createBitmap(input,0,0, input.getWidth(), input.getHeight(), rotationMatrix, true);
         return cropped;
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 
 
