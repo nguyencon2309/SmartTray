@@ -20,6 +20,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,10 +34,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.datn.smarttray.data.Recognition;
+import com.datn.smarttray.detector.EfficientNetClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
 
+import java.io.BufferedReader;
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Button galleryBtn, cameraBtn, analystBtn;
     Uri image_uri;
     YOLOv11Detector yolOv11Detector;
+    EfficientNetClassifier efficientNetClassifier;
     Bitmap image_predict;
     TextView txtLog;
 
@@ -104,7 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
         //load model yolo
         try {
+            List<String> danhSachMonAn = loadLabelList("labels.txt");
             yolOv11Detector = new YOLOv11Detector(getAssets(), "best_float16.tflite");
+            efficientNetClassifier = new EfficientNetClassifier(this,"efficientnet_classifier.tflite",danhSachMonAn);
+
             txtLog.setText("load model yolo thành công");
         } catch (IOException e) {
             txtLog.setText("load model yolo thất bại" + e.getMessage());
@@ -255,14 +264,40 @@ public class MainActivity extends AppCompatActivity {
         StringBuilder logText = new StringBuilder("Kết quả phân tích:\n");
 
         // Duyệt qua danh sách kết quả sạch nhận từ class YOLOv11Detector
-        for (Recognition res : results) {
+        for (Recognition box : results) {
             // Vẽ khung lên hình ảnh
-            canvas.drawRect(res.getLocation(), paintBox);
-            canvas.drawText(res.getTitle() + ": " + String.format("%.2f", res.getConfidence()),
-                    res.getLocation().left, res.getLocation().top - 10, paintText);
+//            canvas.drawRect(res.getLocation(), paintBox);
+//            canvas.drawText(res.getTitle() + ": " + String.format("%.2f", res.getConfidence()),
+//                    res.getLocation().left, res.getLocation().top - 10, paintText);
+//
+//            // Nối chuỗi để in ra TextView log
+//            logText.append(String.format("- Tìm thấy %s (Độ chính xác: %.2f) tại Vị trí: %s\n", res.getTitle(), res.getConfidence(), res.getLocation().toString()));
 
-            // Nối chuỗi để in ra TextView log
-            logText.append(String.format("- Tìm thấy %s (Độ chính xác: %.2f) tại Vị trí: %s\n", res.getTitle(), res.getConfidence(), res.getLocation().toString()));
+            RectF loc = box.getLocation();
+
+            // Lấy tọa độ nguyên (int) để cắt Bitmap
+            int left = Math.max(0, (int) loc.left);
+            int top = Math.max(0, (int) loc.top);
+            int width = Math.min(bitmapGoc.getWidth() - left, (int) loc.width());
+            int height = Math.min(bitmapGoc.getHeight() - top, (int) loc.height());
+
+            if (width > 0 && height > 0) {
+                // TIẾN HÀNH CẮT (CROP) ẢNH ĐĨA ĐỒ ĂN
+                Bitmap croppedFood = Bitmap.createBitmap(bitmapGoc, left, top, width, height);
+
+                // BƯỚC C: Thả ảnh vừa cắt vào EfficientNet để nhận diện món cụ thể
+                String tenMonAn = efficientNetClassifier.classifyFood(croppedFood);
+
+                // Tính tiền dựa trên món ăn nhận diện được
+//                int giaTien = layGiaTienMonAn(tenMonAn);
+//                tongTien += giaTien;
+//
+//                logText.append(String.format("- %s: %,d VNĐ\n", tenMonAn, giaTien));
+
+                // Vẽ khung và đè tên món ăn thực tế lên ảnh
+                canvas.drawRect(loc, paintBox);
+                canvas.drawText(tenMonAn, loc.left, loc.top - 15, paintText);
+            }
         }
         android.util.Log.d("SMART_TRAY_AI", logText.toString());
         // Cập nhật lên màn hình
@@ -270,8 +305,31 @@ public class MainActivity extends AppCompatActivity {
         txtLog.setText(logText.toString());
     }
 
+    private List<String> loadLabelList(String fileName) {
+        List<String> labels = new ArrayList<>();
+        try {
+            // Mở file từ thư mục assets
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(getAssets().open(fileName), "UTF-8")
+            );
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().isEmpty()) { // Bỏ qua các dòng trống nếu có
+                    labels.add(line.trim());
+                }
+            }
+            reader.close();
+            android.util.Log.d("EFFICIENTNET_LABEL", "Đã load thành công " + labels.size() + " món ăn.");
+        } catch (IOException e) {
+            android.util.Log.e("EFFICIENTNET_LABEL", "Lỗi không đọc được file label: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return labels;
+    }
+
     @Override
     protected void onDestroy() {
+        yolOv11Detector.close();
         super.onDestroy();
 
     }

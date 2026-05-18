@@ -203,6 +203,13 @@ public List<Recognition> detectObjects(Bitmap bitmapGoc) {
         return intersection / (area1 + area2 - intersection);
     }
 
+    public void close() {
+        if (tflite != null) {
+            tflite.close();
+            tflite = null;
+        }
+    }
+
     /*
 
     * */
