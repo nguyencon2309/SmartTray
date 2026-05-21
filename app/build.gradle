@@ -45,4 +45,5 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
     // Nếu dùng GPU để tăng tốc (tùy chọn)
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.14.0'
+
 }

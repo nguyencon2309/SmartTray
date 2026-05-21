@@ -29,6 +29,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,13 +37,16 @@ import android.widget.Toast;
 import com.datn.smarttray.data.Recognition;
 import com.datn.smarttray.detector.EfficientNetClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
+import com.datn.smarttray.utils.InvoiceItem;
 
 import java.io.BufferedReader;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
     EfficientNetClassifier efficientNetClassifier;
     Bitmap image_predict;
     TextView txtLog;
+
+    InvoiceFragment invoiceFragment;
+
+    FrameLayout invoiceContainer;
 
 
 
@@ -106,7 +114,13 @@ public class MainActivity extends AppCompatActivity {
         galleryBtn = findViewById(R.id.button);
         cameraBtn = findViewById(R.id.button2);
         analystBtn = findViewById(R.id.button3);
-        txtLog = findViewById(R.id.textView);
+        txtLog = findViewById(R.id.txtView);
+        invoiceContainer = findViewById(R.id.invoiceContainer);
+        invoiceFragment = new InvoiceFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.invoiceContainer, invoiceFragment)
+                .commit();
 
         //load model yolo
         try {
@@ -164,6 +178,10 @@ public class MainActivity extends AppCompatActivity {
                         List<Recognition> results = yolOv11Detector.detectObjects(image_predict);
 
                         // 2. Hiển thị kết quả lên UI
+                        invoiceContainer.setVisibility(View.GONE);
+                        txtLog.setVisibility(View.VISIBLE);
+                        txtLog.setText("Đang phân tích...");
+
                         hienThiKetQuaLenUI(image_predict, results);
                     }
                 }
@@ -246,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
             txtLog.setText("Không phát hiện thấy món ăn nào!");
             return;
         }
+        final Map<String, InvoiceItem> mapHoaDon = new HashMap<>();
 
         // Tạo bản copy của ảnh để vẽ khung
         Bitmap mutableBitmap = bitmapGoc.copy(Bitmap.Config.ARGB_8888, true);
@@ -265,13 +284,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Duyệt qua danh sách kết quả sạch nhận từ class YOLOv11Detector
         for (Recognition box : results) {
-            // Vẽ khung lên hình ảnh
-//            canvas.drawRect(res.getLocation(), paintBox);
-//            canvas.drawText(res.getTitle() + ": " + String.format("%.2f", res.getConfidence()),
-//                    res.getLocation().left, res.getLocation().top - 10, paintText);
-//
-//            // Nối chuỗi để in ra TextView log
-//            logText.append(String.format("- Tìm thấy %s (Độ chính xác: %.2f) tại Vị trí: %s\n", res.getTitle(), res.getConfidence(), res.getLocation().toString()));
 
             RectF loc = box.getLocation();
 
@@ -288,23 +300,42 @@ public class MainActivity extends AppCompatActivity {
                 // BƯỚC C: Thả ảnh vừa cắt vào EfficientNet để nhận diện món cụ thể
                 String tenMonAn = efficientNetClassifier.classifyFood(croppedFood);
 
-                // Tính tiền dựa trên món ăn nhận diện được
-//                int giaTien = layGiaTienMonAn(tenMonAn);
-//                tongTien += giaTien;
-//
-//                logText.append(String.format("- %s: %,d VNĐ\n", tenMonAn, giaTien));
-
-                // Vẽ khung và đè tên món ăn thực tế lên ảnh
                 paintText.setTextSize(width/8f);
                 paintBox.setStrokeWidth(width/50f);
                 canvas.drawRect(loc, paintBox);
                 canvas.drawText(tenMonAn, loc.left, loc.top + 15, paintText);
+                //tính tiền
+                String[] mangTach = tenMonAn.split(" ");
+                String tenMonAnGoc = mangTach[0];
+
+                if (mapHoaDon.containsKey(tenMonAnGoc)) {
+                    InvoiceItem itemCu = mapHoaDon.get(tenMonAnGoc);
+                    mapHoaDon.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, itemCu.getQuantity() + 1, 5000));
+                } else {
+                    // Nếu là món mới xuất hiện thì đặt số lượng là 1
+                    mapHoaDon.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, 1, 5000));
+                }
+                final List<InvoiceItem> danhSachInvoice = new ArrayList<>(mapHoaDon.values());
+
+                if (!danhSachInvoice.isEmpty()) {
+                    // NẾU CÓ MÓN ĂN: Ẩn chữ thông báo, hiện khung hóa đơn và nạp bảng dữ liệu vào
+                    txtLog.setVisibility(View.GONE);
+                    invoiceContainer.setVisibility(View.VISIBLE);
+
+                    invoiceFragment.updateInvoice(danhSachInvoice);
+                } else {
+                    // NẾU KHÔNG CÓ MÓN: Hiện TextView thông báo lỗi, ẩn bảng hóa đơn đi
+                    txtLog.setVisibility(View.VISIBLE);
+                    txtLog.setText("Không phát hiện đĩa món ăn nào trên khay!");
+                    invoiceContainer.setVisibility(View.GONE);
+                }
+
             }
         }
         android.util.Log.d("SMART_TRAY_AI", logText.toString());
         // Cập nhật lên màn hình
         imageView.setImageBitmap(mutableBitmap);
-        txtLog.setText(logText.toString());
+
     }
 
     private List<String> loadLabelList(String fileName) {
