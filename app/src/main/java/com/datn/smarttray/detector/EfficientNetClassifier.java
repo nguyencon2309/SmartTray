@@ -70,7 +70,8 @@ public class EfficientNetClassifier {
 
         // Trả về tên món ăn nếu độ tự tin tốt, ngược lại trả về không xác định
         //return maxScore > 0.5f ? labelList.get(maxIndex) : "Chưa rõ món";
-        return labelList.get(maxIndex) + " " + maxScore;
+        String scoreDinhDang = String.format(java.util.Locale.US, "%.2f", maxScore) + "f";
+        return labelList.get(maxIndex) + " " + scoreDinhDang;
     }
 
     public void close() {

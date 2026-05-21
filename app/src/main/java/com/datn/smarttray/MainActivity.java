@@ -254,11 +254,11 @@ public class MainActivity extends AppCompatActivity {
         Paint paintBox = new Paint();
         paintBox.setColor(Color.RED);
         paintBox.setStyle(Paint.Style.STROKE);
-        paintBox.setStrokeWidth(8.0f);
+        paintBox.setStrokeWidth(3.0f);
 
         Paint paintText = new Paint();
         paintText.setColor(Color.GREEN);
-        paintText.setTextSize(40.0f);
+        paintText.setTextSize(20.0f);
         paintText.setStyle(Paint.Style.FILL);
 
         StringBuilder logText = new StringBuilder("Kết quả phân tích:\n");
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (width > 0 && height > 0) {
                 // TIẾN HÀNH CẮT (CROP) ẢNH ĐĨA ĐỒ ĂN
-                Bitmap croppedFood = Bitmap.createBitmap(bitmapGoc, left, top, width, height);
+                Bitmap croppedFood = Bitmap.createBitmap(bitmapGoc, Math.max(left-10,0), Math.max(top-10,0), width+20, height+20);
 
                 // BƯỚC C: Thả ảnh vừa cắt vào EfficientNet để nhận diện món cụ thể
                 String tenMonAn = efficientNetClassifier.classifyFood(croppedFood);
@@ -295,8 +295,10 @@ public class MainActivity extends AppCompatActivity {
 //                logText.append(String.format("- %s: %,d VNĐ\n", tenMonAn, giaTien));
 
                 // Vẽ khung và đè tên món ăn thực tế lên ảnh
+                paintText.setTextSize(width/8f);
+                paintBox.setStrokeWidth(width/50f);
                 canvas.drawRect(loc, paintBox);
-                canvas.drawText(tenMonAn, loc.left, loc.top - 15, paintText);
+                canvas.drawText(tenMonAn, loc.left, loc.top + 15, paintText);
             }
         }
         android.util.Log.d("SMART_TRAY_AI", logText.toString());
