@@ -37,7 +37,9 @@ import android.widget.Toast;
 import com.datn.smarttray.data.Recognition;
 import com.datn.smarttray.detector.EfficientNetClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
+import com.datn.smarttray.utils.ImageUtils;
 import com.datn.smarttray.utils.InvoiceItem;
+
 
 import java.io.BufferedReader;
 import java.io.FileDescriptor;
@@ -47,6 +49,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
     InvoiceFragment invoiceFragment;
 
     FrameLayout invoiceContainer;
+
+
+
+
 
 
 
@@ -122,6 +132,12 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.invoiceContainer, invoiceFragment)
                 .commit();
 
+
+
+
+
+
+
         //load model yolo
         try {
             List<String> danhSachMonAn = loadLabelList("labels.txt");
@@ -173,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(yolOv11Detector!=null){
-                    if (yolOv11Detector != null) {
+
                         // 1. Gọi class YOLO xử lý và trả về list kết quả sạch
                         List<Recognition> results = yolOv11Detector.detectObjects(image_predict);
 
@@ -183,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                         txtLog.setText("Đang phân tích...");
 
                         hienThiKetQuaLenUI(image_predict, results);
-                    }
+
                 }
             }
         });
@@ -295,11 +311,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (width > 0 && height > 0) {
                 // TIẾN HÀNH CẮT (CROP) ẢNH ĐĨA ĐỒ ĂN
-                Bitmap croppedFood = Bitmap.createBitmap(bitmapGoc, Math.max(left-10,0), Math.max(top-10,0), width+20, height+20);
-
+                //Bitmap croppedFood = Bitmap.createBitmap(bitmapGoc, Math.max(left-10,0), Math.max(top-10,0), width+20, height+20);
+                Bitmap croppedFood = ImageUtils.cropBitmapWithRect(bitmapGoc,loc,10);
                 // BƯỚC C: Thả ảnh vừa cắt vào EfficientNet để nhận diện món cụ thể
                 String tenMonAn = efficientNetClassifier.classifyFood(croppedFood);
-
+                croppedFood.recycle();
                 paintText.setTextSize(width/8f);
                 paintBox.setStrokeWidth(width/50f);
                 canvas.drawRect(loc, paintBox);
@@ -329,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
                     txtLog.setText("Không phát hiện đĩa món ăn nào trên khay!");
                     invoiceContainer.setVisibility(View.GONE);
                 }
+                //
 
             }
         }
