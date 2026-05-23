@@ -321,9 +321,10 @@ public class ScanFragment extends Fragment {
     }
 
     private Map<String, InvoiceItem> addInvoiceItem(Map<String, InvoiceItem> mapBill, String FoodRatio){
-        String[] mangTach = FoodRatio.split(" ");
+        int lastSpaceIndex = FoodRatio.lastIndexOf(" ");
 
-        String tenMonAnGoc = mangTach[0];
+        String tenMonAnGoc = FoodRatio.substring(0,lastSpaceIndex);
+
         if (mapBill.containsKey(tenMonAnGoc)) {
             InvoiceItem itemCu = mapBill.get(tenMonAnGoc);
             mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, itemCu.getQuantity() + 1, 5000));

@@ -1,24 +1,160 @@
 package com.datn.smarttray.manager;
 
+
+import androidx.annotation.NonNull;
+
+import com.datn.smarttray.model.Food;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class FoodManager {
-//    private DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("food");
-//    private StorageReference storageRef = FirebaseStorage.getInstance().getReference("food_images");
-//
-//    // 1. Lấy danh sách (Get List)
-//    public void getAllFoods(ValueEventListener listener) {
-//        dbRef.addValueEventListener(listener);
-//    }
-//
-//    // 2. Upload ảnh và lưu thông tin Food
-//    public void addFood(Food food, Uri imageUri) {
-//        StorageReference fileRef = storageRef.child(System.currentTimeMillis() + ".jpg");
-//        fileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
-//            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-//                food.image = uri.toString(); // Gán URL ảnh vào model
-//                dbRef.child(food.id).setValue(food);
-//            });
-//        });
-//    }
+
+    private static final List<Food> foodList =
+            new ArrayList<>();
+
+    private static boolean isLoaded = false;
 
 
+    public static void loadFoods(
+            FoodLoadCallback callback
+    ) {
+
+        // Nếu đã load rồi thì trả luôn
+        if (isLoaded) {
+
+            callback.onLoaded(foodList);
+
+            return;
+        }
+        //FirebaseDatabase.getInstance();
+
+
+        DatabaseReference foodRef =
+                FirebaseDatabase
+                        .getInstance()
+                        .getReference("food");
+
+        foodRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(
+                            @NonNull DataSnapshot snapshot
+                    ) {
+
+                        foodList.clear();
+
+                        for (DataSnapshot data :
+                                snapshot.getChildren()) {
+
+                            Food food =
+                                    data.getValue(Food.class);
+
+                            if (food != null) {
+
+                                foodList.add(food);
+                            }
+                        }
+
+                        isLoaded = true;
+
+                        callback.onLoaded(foodList);
+                    }
+
+                    @Override
+                    public void onCancelled(
+                            @NonNull DatabaseError error
+                    ) {
+
+                        callback.onError(
+                                error.getMessage()
+                        );
+                    }
+                }
+        );
+    }
+
+
+    public static List<Food> getFoodList() {
+
+        return foodList;
+    }
+
+
+    public static Food getFoodByName(
+            String name
+    ) {
+
+        for (Food food : foodList) {
+
+            if (food.getNameViet()
+                    .equalsIgnoreCase(name)) {
+
+                return food;
+            }
+        }
+
+        return null;
+    }
+    public static void refreshFoods(
+            FoodLoadCallback callback
+    ) {
+
+        //FirebaseDatabase.getInstance();
+        DatabaseReference foodRef =
+                FirebaseDatabase
+                        .getInstance()
+                        .getReference("food");
+
+        foodRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(
+                            @NonNull DataSnapshot snapshot
+                    ) {
+
+                        foodList.clear();
+
+                        for (DataSnapshot data :
+                                snapshot.getChildren()) {
+
+                            Food food =
+                                    data.getValue(Food.class);
+
+                            if (food != null) {
+
+                                foodList.add(food);
+                            }
+                        }
+
+                        isLoaded = true;
+
+                        callback.onLoaded(foodList);
+                    }
+
+                    @Override
+                    public void onCancelled(
+                            @NonNull DatabaseError error
+                    ) {
+
+                        callback.onError(
+                                error.getMessage()
+                        );
+                    }
+                }
+        );
+    }
+
+
+    public interface FoodLoadCallback {
+
+        void onLoaded(List<Food> foods);
+
+        void onError(String error);
+    }
 }

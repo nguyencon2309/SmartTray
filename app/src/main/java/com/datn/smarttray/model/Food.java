@@ -16,4 +16,13 @@ public class Food {
         this.description = description;
         this.image = image;
     }
+    public String getNameViet(){
+        return vietnamese_name;
+    }
+    public int getPrice(){
+        return price;
+    }
+    public String getImageUrl(){
+        return image;
+    }
 }
