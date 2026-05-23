@@ -1,54 +1,66 @@
 package com.datn.smarttray;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
+//import androidx.activity.result.ActivityResult;
+//import androidx.activity.result.ActivityResultCallback;
+//import androidx.activity.result.ActivityResultLauncher;
+//import androidx.activity.result.contract.ActivityResultContracts;
+//import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.net.Uri;
-import android.os.Build;
+//import android.Manifest;
+//import android.annotation.SuppressLint;
+//import android.app.Activity;
+//import android.content.ContentValues;
+//import android.content.Intent;
+//import android.content.pm.PackageManager;
+//import android.database.Cursor;
+//import android.graphics.Bitmap;
+//import android.graphics.BitmapFactory;
+//import android.graphics.Canvas;
+//import android.graphics.Color;
+//import android.graphics.Matrix;
+//import android.graphics.Paint;
+//import android.graphics.RectF;
+//import android.net.Uri;
+//import android.os.Build;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+//import android.os.ParcelFileDescriptor;
+//import android.provider.MediaStore;
+//import android.util.Log;
+//import android.view.View;
+//import android.widget.Button;
+//import android.widget.FrameLayout;
+//import android.widget.ImageView;
+//import android.widget.TextView;
+//import android.widget.Toast;
+//
+//import com.datn.smarttray.data.Recognition;
+//import com.datn.smarttray.detector.EfficientNetClassifier;
+//import com.datn.smarttray.detector.YOLOv11Detector;
+import com.datn.smarttray.fragment.HistoryFragment;
+import com.datn.smarttray.fragment.HomeFragment;
+import com.datn.smarttray.fragment.MenuFragment;
+import com.datn.smarttray.fragment.ScanFragment;
+//import com.datn.smarttray.model.Food;
+//import com.datn.smarttray.utils.ImageUtils;
+//import com.datn.smarttray.utils.InvoiceItem;
+import com.datn.smarttray.manager.ModelManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+//import com.google.firebase.FirebaseApp;
+//import com.google.firebase.FirebaseOptions;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
 
-import com.datn.smarttray.data.Recognition;
-import com.datn.smarttray.detector.EfficientNetClassifier;
-import com.datn.smarttray.detector.YOLOv11Detector;
-import com.datn.smarttray.utils.ImageUtils;
-import com.datn.smarttray.utils.InvoiceItem;
-
-
-import java.io.BufferedReader;
-import java.io.FileDescriptor;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+//
+//import java.io.BufferedReader;
+//import java.io.FileDescriptor;
+//import java.io.IOException;
+//import java.io.InputStreamReader;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Map;
 
 
 
@@ -56,17 +68,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView imageView;
-    Button galleryBtn, cameraBtn, analystBtn;
-    Uri image_uri;
-    YOLOv11Detector yolOv11Detector;
-    EfficientNetClassifier efficientNetClassifier;
-    Bitmap image_predict;
-    TextView txtLog;
 
-    InvoiceFragment invoiceFragment;
 
-    FrameLayout invoiceContainer;
+    BottomNavigationView bottomNav;
 
 
 
@@ -74,44 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK && result.getData()!=null) {
-                        Uri selectedImageUri = result.getData().getData();
-                        if(selectedImageUri != null){
-                            image_uri = result.getData().getData();
-                            Bitmap inputImage = uriToBitmap(image_uri);
-                            Bitmap rotated = rotateBitmap(inputImage);
-                            imageView.setImageBitmap(rotated);
-                            image_predict = rotated;
-                        }
 
-                    }
-                }
-
-            }
-    );
-
-    //TODO capture the image using camera and display it
-    ActivityResultLauncher<Intent> cameraActivityResultLauncher  = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if(result.getResultCode() == Activity.RESULT_OK
-
-                    ){
-                        Bitmap inputImage = uriToBitmap(image_uri);
-                        Bitmap rotated = rotateBitmap(inputImage);
-                        imageView.setImageBitmap(rotated);
-                        image_predict = rotated;
-                    }
-                }
-            }
-    );
 
 
 
@@ -120,19 +87,66 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageView = findViewById(R.id.imageView);
-        galleryBtn = findViewById(R.id.button);
-        cameraBtn = findViewById(R.id.button2);
-        analystBtn = findViewById(R.id.button3);
-        txtLog = findViewById(R.id.txtView);
-        invoiceContainer = findViewById(R.id.invoiceContainer);
-        invoiceFragment = new InvoiceFragment();
+
+        bottomNav = findViewById(R.id.bottom_navigation);
+
+        loadFragment(new HomeFragment());
+
+        bottomNav.setOnItemSelectedListener(item -> {
+
+            Fragment fragment = null;
+
+            if (item.getItemId() == R.id.nav_home) {
+                fragment = new HomeFragment();
+            } else if (item.getItemId() == R.id.nav_scan) {
+                fragment = new ScanFragment();
+            } else if (item.getItemId() == R.id.nav_menu) {
+                fragment = new MenuFragment();
+            } else if (item.getItemId() == R.id.nav_history) {
+                fragment = new HistoryFragment();
+            }
+
+            return loadFragment(fragment);
+        });
+
+        ModelManager.init(this);
+
+
+//        imageView = findViewById(R.id.imageView);
+//        galleryBtn = findViewById(R.id.button);
+//        cameraBtn = findViewById(R.id.button2);
+//        analystBtn = findViewById(R.id.button3);
+//        txtLog = findViewById(R.id.txtView);
+//        invoiceContainer = findViewById(R.id.invoiceContainer);
+        /*invoiceFragment = new InvoiceFragment();
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.invoiceContainer, invoiceFragment)
                 .commit();
 
+        if (FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setApplicationId("1:137213055582:android:fe8956bd0751427b5b9acf")
+                    .setApiKey("AIzaSyCDMD2iiIg5gRfkw-qEkhrG4ZNTJDNJVVk")
+                    .setDatabaseUrl("https://smarttray-95dc4-default-rtdb.firebaseio.com")
+                    .setProjectId("smarttray-95dc4")
+                    .build();
 
+            FirebaseApp.initializeApp(this, options);
+        }
+        mDatabase = FirebaseDatabase.getInstance().getReference("food");
+        List<String> danhSachMonAn = loadLabelList("labels.txt");
+        List<String> danhSachMonAn_Viet = loadLabelList("labels_viet.txt");
+        for(int i=0;i<40;i++){
+            String foodId = mDatabase.push().getKey();
+            Food food = new Food(foodId,danhSachMonAn.get(i),danhSachMonAn_Viet.get(i),5000,"chua co mo ta","default url");
+            mDatabase.child(foodId).setValue(food);
+        }
+
+
+
+
+        // pushing user to 'users' node using the userId
 
 
 
@@ -202,11 +216,27 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             }
-        });
+        });*/
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+
+        if (fragment != null) {
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+
+            return true;
+        }
+
+        return false;
     }
 
     //TODO opens camera so that user can capture image
 
+/*
     private void openCamera() {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "New Picture");
@@ -354,32 +384,13 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageBitmap(mutableBitmap);
 
     }
+    */
 
-    private List<String> loadLabelList(String fileName) {
-        List<String> labels = new ArrayList<>();
-        try {
-            // Mở file từ thư mục assets
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(getAssets().open(fileName), "UTF-8")
-            );
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.trim().isEmpty()) { // Bỏ qua các dòng trống nếu có
-                    labels.add(line.trim());
-                }
-            }
-            reader.close();
-            android.util.Log.d("EFFICIENTNET_LABEL", "Đã load thành công " + labels.size() + " món ăn.");
-        } catch (IOException e) {
-            android.util.Log.e("EFFICIENTNET_LABEL", "Lỗi không đọc được file label: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return labels;
-    }
+
 
     @Override
     protected void onDestroy() {
-        yolOv11Detector.close();
+        //yolOv11Detector.close();
         super.onDestroy();
 
     }
