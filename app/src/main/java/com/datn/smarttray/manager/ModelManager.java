@@ -35,8 +35,7 @@ public class ModelManager {
                 classifier =
                         new EfficientNetClassifier(
                                 context,
-                                "efficientnet_classifier.tflite",
-                                labels
+                                "efficientnet_classifier.tflite"
                         );
 
             } catch (IOException e) {

@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,24 +103,35 @@ public class InvoiceFragment extends Fragment {
             tvName.setText(item.getName());
             tvName.setTextColor(Color.parseColor("#333333"));
 
+            tvName.setMaxLines(1);
+
+            tvName.setEllipsize(
+                    TextUtils.TruncateAt.END
+            );
+
+            tvName.setWidth(405);
+
             // 2. Cột Số lượng
             TextView tvQty = new TextView(getContext());
             tvQty.setText(String.valueOf(item.getQuantity()));
             tvQty.setGravity(android.view.Gravity.CENTER);
             tvQty.setTextColor(Color.parseColor("#333333"));
+            tvQty.setWidth(190);
 
             // 3. Cột Đơn giá
             TextView tvPrice = new TextView(getContext());
             tvPrice.setText(String.format(Locale.US, "%,d", item.getPrice()));
-            tvPrice.setGravity(android.view.Gravity.END);
+            tvPrice.setGravity(Gravity.CENTER);
             tvPrice.setTextColor(Color.parseColor("#333333"));
+            tvPrice.setWidth(190);
 
             // 4. Cột Thành tiền
             TextView tvTotal = new TextView(getContext());
             tvTotal.setText(String.format(Locale.US, "%,d", item.getTotalPrice()));
-            tvTotal.setGravity(android.view.Gravity.END);
+            tvTotal.setGravity(Gravity.CENTER);
             tvTotal.setTextColor(Color.parseColor("#333333"));
             tvTotal.setTypeface(null, android.graphics.Typeface.BOLD);
+            tvTotal.setWidth(220);
 
             // Add các ô vào dòng
             row.addView(tvName);

@@ -43,7 +43,9 @@ import com.datn.smarttray.R;
 import com.datn.smarttray.data.Recognition;
 import com.datn.smarttray.detector.EfficientNetClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
+import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.manager.ModelManager;
+import com.datn.smarttray.model.Food;
 import com.datn.smarttray.utils.ImageUtils;
 import com.datn.smarttray.utils.InvoiceItem;
 
@@ -71,6 +73,7 @@ public class ScanFragment extends Fragment {
     InvoiceFragment invoiceFragment;
 
     FrameLayout invoiceContainer;
+    List<Food> listFood;
 
 
 
@@ -127,6 +130,7 @@ public class ScanFragment extends Fragment {
         yolOv11Detector = ModelManager.getYoloDetector();
 
         efficientNetClassifier = ModelManager.getClassifier();
+        listFood = FoodManager.getFoodList();
     }
 
     private void initInvoiceFragment() {
@@ -292,7 +296,9 @@ public class ScanFragment extends Fragment {
         return resultClassier;
     }
     private void drawBox(String nameFood,RectF loc,Canvas canvas){
+        String[] splitArray = nameFood.split(" ");
 
+        String tenMonAnGoc = listFood.get(Integer.parseInt(splitArray[0])).getNameViet();
 
         Paint paintBox = new Paint();
         paintBox.setColor(Color.RED);
@@ -307,7 +313,7 @@ public class ScanFragment extends Fragment {
         paintBox.setStrokeWidth(loc.width()/50f);
         canvas.drawRect(loc, paintBox);
 
-        canvas.drawText(nameFood, loc.left, loc.top + 15, paintText);
+        canvas.drawText(tenMonAnGoc+" "+splitArray[1], loc.left, loc.top + 15, paintText);
 
     }
 
@@ -321,16 +327,16 @@ public class ScanFragment extends Fragment {
     }
 
     private Map<String, InvoiceItem> addInvoiceItem(Map<String, InvoiceItem> mapBill, String FoodRatio){
-        int lastSpaceIndex = FoodRatio.lastIndexOf(" ");
+        String[] splitArray = FoodRatio.split(" ");
 
-        String tenMonAnGoc = FoodRatio.substring(0,lastSpaceIndex);
-
+        String tenMonAnGoc = listFood.get(Integer.parseInt(splitArray[0])).getNameViet();
+        int price = listFood.get(Integer.parseInt(splitArray[0])).getPrice();
         if (mapBill.containsKey(tenMonAnGoc)) {
             InvoiceItem itemCu = mapBill.get(tenMonAnGoc);
-            mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, itemCu.getQuantity() + 1, 5000));
+            mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, itemCu.getQuantity() + 1, price));
         } else {
             // Nếu là món mới xuất hiện thì đặt số lượng là 1
-            mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, 1, 5000));
+            mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, 1, price));
         }
 
 

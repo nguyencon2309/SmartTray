@@ -14,17 +14,15 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="HOÁ ĐƠN"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            />
+            android:textStyle="bold" />
 
         <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/tableInvoice"
-            >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -33,57 +31,61 @@
                 android:padding="4dp">
 
                 <TextView
+                    android:width="405px"
+                    android:ellipsize="end"
                     android:gravity="center"
-                    android:text="Món ăn"
-                    android:textStyle="bold"
-                    android:layout_width="155dp"
-                    />
+
+                    android:maxLines="1"
+                    android:text="Tên món"
+                    android:textStyle="bold" />
+
                 <TextView
 
+                    android:width="190px"
+                    android:gravity="center"
                     android:text="Số lượng"
-                    android:textStyle="bold"
-                    android:gravity="center" android:layout_width="80dp"
-                    />
-                <TextView
-                    android:gravity="center" android:layout_width="80dp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:width="190px"
+                    android:gravity="center"
                     android:text="Giá"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:gravity="center" android:layout_width="90dp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:width="220px"
+                    android:gravity="center"
                     android:text="Thành tiền"
                     android:textStyle="bold" />
             </TableRow>
 
 
-
         </TableLayout>
-
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
                 android:text="TỔNG TIỀN:"
-                android:textStyle="bold"
                 android:textColor="#D32F2F"
                 android:textSize="16sp"
-                android:layout_alignParentLeft="true"/>
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/txtTongTien"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:text="0 VNĐ"
-                android:textStyle="bold"
                 android:textColor="#D32F2F"
                 android:textSize="16sp"
-                android:layout_alignParentRight="true"/>
+                android:textStyle="bold" />
         </RelativeLayout>
     </LinearLayout>
 </FrameLayout>

@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             return loadFragment(fragment);
         });
 
-        ModelManager.init(this);
+
 
         if (FirebaseApp.getApps(this).isEmpty()) {
             FirebaseOptions options = new FirebaseOptions.Builder()
@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        ModelManager.init(this);
         //initFirebase();
 
     }

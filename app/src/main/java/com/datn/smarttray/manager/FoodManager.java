@@ -85,6 +85,10 @@ public class FoodManager {
     }
 
 
+    public static int getSizeFoodList (){
+        return foodList.size();
+    }
+
     public static Food getFoodByName(
             String name
     ) {

@@ -5,6 +5,8 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 
+import com.datn.smarttray.manager.FoodManager;
+
 import org.tensorflow.lite.Interpreter;
 
 import java.io.FileInputStream;
@@ -17,11 +19,11 @@ import java.util.List;
 public class EfficientNetClassifier {
     private int INPUT_SIZE = 224; // EfficientNet-B0 thường dùng 224x224
     private Interpreter tflite;
-    private List<String> labelList;
+    private int sizeFoodList = 40;
 
-    public EfficientNetClassifier(Context context, String modelPath,List<String> labelList) throws IOException {
+    public EfficientNetClassifier(Context context, String modelPath) throws IOException {
         this.tflite = new Interpreter(loadModelFile(context.getAssets(),modelPath));
-        this.labelList = labelList;
+
 
     }
     private java.nio.MappedByteBuffer loadModelFile(AssetManager assetManager, String modelPath) throws IOException {
@@ -53,7 +55,7 @@ public class EfficientNetClassifier {
         }
 
         // 3. Mảng chứa đầu ra: 1 x Số_Lượng_Món_Ăn
-        float[][] outputBuffer = new float[1][labelList.size()];
+        float[][] outputBuffer = new float[1][sizeFoodList];
 
         // 4. Chạy mô hình
         tflite.run(inputBuffer, outputBuffer);
@@ -61,7 +63,7 @@ public class EfficientNetClassifier {
         // 5. Tìm món ăn có xác suất cao nhất (Argmax)
         int maxIndex = 0;
         float maxScore = outputBuffer[0][0];
-        for (int i = 1; i < labelList.size(); i++) {
+        for (int i = 1; i < sizeFoodList; i++) {
             if (outputBuffer[0][i] > maxScore) {
                 maxScore = outputBuffer[0][i];
                 maxIndex = i;
@@ -71,7 +73,7 @@ public class EfficientNetClassifier {
         // Trả về tên món ăn nếu độ tự tin tốt, ngược lại trả về không xác định
         //return maxScore > 0.5f ? labelList.get(maxIndex) : "Chưa rõ món";
         String scoreDinhDang = String.format(java.util.Locale.US, "%.2f", maxScore) + "f";
-        return labelList.get(maxIndex) + " " + scoreDinhDang;
+        return maxIndex + " " + scoreDinhDang;
     }
 
     public void close() {
