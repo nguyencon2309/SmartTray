@@ -31,6 +31,7 @@ public class InvoiceFragment extends Fragment {
 
     private TextView txtTongTien;
     private TableLayout tableInvoice;
+    private List<InvoiceItem> cachedInvoiceList;
 /*
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -39,18 +40,18 @@ public class InvoiceFragment extends Fragment {
     public InvoiceFragment() {
         // Required empty public constructor
     }
-
+    */
 
     // TODO: Rename and change types and number of parameters
-    public static InvoiceFragment newInstance(String param1, String param2) {
+    /*
+    public static InvoiceFragment newInstance(List<InvoiceItem> invoiceItemList) {
         InvoiceFragment fragment = new InvoiceFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+        updateInvoice(invoiceItemList);
         return fragment;
-    }
-
+    }*/
+    /*
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,11 +74,26 @@ public class InvoiceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_invoice, container, false);
         tableInvoice = view.findViewById(R.id.tableInvoice);
         txtTongTien = view.findViewById(R.id.txtTongTien);
+
         return view;
     }
 
+    @Override
+    public void onViewCreated(
+            @NonNull View view,
+            @Nullable Bundle savedInstanceState
+    ) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if(cachedInvoiceList != null){
+
+            updateInvoice(cachedInvoiceList);
+        }
+    }
+
     // Hàm public để MainActivity đẩy dữ liệu món ăn vào bảng bất cứ lúc nào
-    public void updateInvoice(List<InvoiceItem> items) {
+    public void updateInvoice (List<InvoiceItem> invoiceItemList) {
+        cachedInvoiceList = invoiceItemList;
         if (tableInvoice == null) return;
 
         // Xóa các dòng cũ (chỉ giữ lại dòng tiêu đề Index 0)
@@ -86,10 +102,10 @@ public class InvoiceFragment extends Fragment {
             tableInvoice.removeViews(1, childCount - 1);
         }
 
-        int tongTienKhay = 0;
+        int tongtien = 0;
 
         // Duyệt qua danh sách để add dòng mới vào Table
-        for (InvoiceItem item : items) {
+        for (InvoiceItem item : invoiceItemList) {
             TableRow row = new TableRow(getContext());
             row.setPadding(8, 12, 8, 12);
 
@@ -141,11 +157,12 @@ public class InvoiceFragment extends Fragment {
 
             // Add dòng vào bảng
             tableInvoice.addView(row);
+            tongtien+=item.getTotalPrice();
 
-            tongTienKhay += item.getTotalPrice();
+
         }
 
         // Cập nhật text tổng tiền hiển thị công khai
-        txtTongTien.setText(String.format(Locale.US, "%,d VNĐ", tongTienKhay));
+        txtTongTien.setText(String.format(Locale.US, "%,d VNĐ", tongtien));
     }
 }

@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,8 +43,11 @@ import com.datn.smarttray.data.Recognition;
 import com.datn.smarttray.detector.EfficientNetClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
 import com.datn.smarttray.manager.FoodManager;
+import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.History;
+import com.datn.smarttray.utils.ImageStorageUtil;
 import com.datn.smarttray.utils.ImageUtils;
 import com.datn.smarttray.utils.InvoiceItem;
 
@@ -67,13 +69,15 @@ public class ScanFragment extends Fragment {
     Uri image_uri;
     YOLOv11Detector yolOv11Detector;
     EfficientNetClassifier efficientNetClassifier;
-    Bitmap image_predict;
+    Bitmap image_predict,copy_image_bitmap;
     TextView txtLog;
 
     InvoiceFragment invoiceFragment;
 
     FrameLayout invoiceContainer;
     List<Food> listFood;
+    List<InvoiceItem> danhSachInvoice;
+    private boolean isPredictMode = true;
 
 
 
@@ -146,6 +150,16 @@ public class ScanFragment extends Fragment {
                 .commit();
     }
 
+    private void setButtonPredict(){
+        danhSachInvoice=null;
+        isPredictMode = true;
+        analystBtn.setText("PREDICT");
+
+    }
+    private void setButtonSave(){
+        isPredictMode = false;
+        analystBtn.setText("SAVE");
+    }
     private void setupListeners() {
 
         galleryBtn.setOnClickListener(v -> {
@@ -161,8 +175,13 @@ public class ScanFragment extends Fragment {
         });
 
         analystBtn.setOnClickListener(v -> {
+            if(isPredictMode){
+                analyzeImage();
+            }
+            else{
+                saveHistory();
+            }
 
-            analyzeImage();
 
         });
     }
@@ -241,7 +260,7 @@ public class ScanFragment extends Fragment {
         cameraLauncher.launch(cameraIntent);
     }
 
-
+    /*
     private Bitmap getBitmapImage(){
         if (imageView.getDrawable() instanceof BitmapDrawable) {
             BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
@@ -249,10 +268,10 @@ public class ScanFragment extends Fragment {
             return bitmap;
         }
         return null;
-    }
+    }*/
 
     private void analyzeImage() {
-        Bitmap imagePredict = getBitmapImage();
+        Bitmap imagePredict = image_predict;
         if (imagePredict == null) {
 
             Toast.makeText(
@@ -284,6 +303,7 @@ public class ScanFragment extends Fragment {
             txtLog.setText(
                     "Không phát hiện món ăn nào"
             );
+            image_predict = null;
 
             return;
         }
@@ -318,7 +338,8 @@ public class ScanFragment extends Fragment {
     }
 
     private void updateLayoutInvoice(Map<String, InvoiceItem> mapBill){
-        List<InvoiceItem> danhSachInvoice = new ArrayList<>(mapBill.values());
+        danhSachInvoice = null;
+        danhSachInvoice = new ArrayList<>(mapBill.values());
 
         txtLog.setVisibility(View.GONE);
         invoiceContainer.setVisibility(View.VISIBLE);
@@ -368,6 +389,11 @@ public class ScanFragment extends Fragment {
         }
         updateLayoutInvoice(mapBill);
         imageView.setImageBitmap(mutableBitmap);
+        image_predict.recycle();
+        image_predict = null;
+        copy_image_bitmap = mutableBitmap;
+
+        setButtonSave();
     }
     private final ActivityResultLauncher<Intent> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -377,6 +403,8 @@ public class ScanFragment extends Fragment {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData()!=null) {
                         Uri selectedImageUri = result.getData().getData();
                         if(selectedImageUri != null){
+                            setButtonPredict();
+
                             image_uri = result.getData().getData();
                             Bitmap inputImage = uriToBitmap(image_uri);
                             Bitmap rotated = rotateBitmap(inputImage);
@@ -399,6 +427,7 @@ public class ScanFragment extends Fragment {
                     if(result.getResultCode() == Activity.RESULT_OK
 
                     ){
+                        setButtonPredict();
                         Bitmap inputImage = uriToBitmap(image_uri);
                         Bitmap rotated = rotateBitmap(inputImage);
                         imageView.setImageBitmap(rotated);
@@ -442,5 +471,29 @@ public class ScanFragment extends Fragment {
             e.printStackTrace();
         }
         return  null;
+    }
+    private void saveHistory(){
+
+        History history = new History(saveImage(copy_image_bitmap),System.currentTimeMillis(),danhSachInvoice);
+        HistoryManager.addHistory(history);
+        copy_image_bitmap.recycle();
+        copy_image_bitmap = null;
+        setButtonPredict();
+    }
+    private String saveImage(Bitmap bitmap){
+        Bitmap resized =
+                Bitmap.createScaledBitmap(
+                        bitmap,
+                        600,
+                        600,
+                        true
+                );
+        String path =
+                ImageStorageUtil.saveBitmap(
+                        requireContext(),
+                        resized
+                );
+        resized = null;
+        return path;
     }
 }

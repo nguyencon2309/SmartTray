@@ -17,7 +17,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 public class EfficientNetClassifier {
-    private int INPUT_SIZE = 224; // EfficientNet-B0 thường dùng 224x224
+    private int INPUT_SIZE = 240; // EfficientNet-B0 thường dùng 224x224
     private Interpreter tflite;
     private int sizeFoodList = 40;
 

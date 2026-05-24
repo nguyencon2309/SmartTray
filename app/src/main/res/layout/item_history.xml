@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:layout_marginHorizontal="12dp"
+android:layout_marginTop="8dp"
+android:layout_marginBottom="4dp"
+app:cardCornerRadius="18dp"
+app:cardElevation="4dp"
+app:cardUseCompatPadding="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="14dp"
+    android:gravity="center_vertical"
+    android:background="#FFFFFF"
+    android:weightSum="6"
+    >
+
+    <ImageView
+        android:id="@+id/imgPredict"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_baseline_fastfood_24"
+        android:background="@drawable/bg_food_image"
+
+        />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:layout_marginStart="14dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtSumprice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50000VND"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/txtQuanlityFood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50000VND"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Time"
+            android:textColor="#4CAF50"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            />
+
+
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/imageDeleteBtn"
+        android:layout_width="40dp"
+        android:layout_height="48dp"
+
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+
+        android:src="@drawable/ic_baseline_delete_forever_24"
+
+        tools:ignore="SpeakableTextPresentCheck" />
+
+
+</LinearLayout>
+
+</androidx.cardview.widget.CardView>
