@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FB"
+    tools:context=".DetailFoodActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- IMAGE -->
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="6dp">
+
+            <ImageView
+                android:id="@+id/imgFood"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_baseline_fastfood_24"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- INFO CARD -->
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Vietnamese Name -->
+
+                <TextView
+                    android:id="@+id/txtFoodName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cơm Tấm"
+                    android:textColor="#222222"
+                    android:textSize="28sp"
+                    android:textStyle="bold"/>
+
+                <!-- Price -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:id="@+id/txtFoodPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="50,000"
+                        android:textColor="#4CAF50"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:enabled="false"
+                        android:inputType="number"
+                        />
+                    <TextView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text=" VNĐ"
+                        android:textColor="#4CAF50"
+                        android:textSize="22sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+
+                <!-- Divider -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="16dp"
+                    android:background="#DDDDDD"/>
+
+                <!-- AI CLASS -->
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="MÔ TẢ"
+                    android:textColor="#888888"
+                    android:textStyle="bold"/>
+
+                <EditText
+                    android:id="@+id/txtDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="Món cơm truyền thống Việt Nam..."
+                    android:textColor="#444444"
+                    android:textSize="16sp"
+                    android:enabled="false"
+                    />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- BUTTONS -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnUpdate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="UPDATE"
+                android:textStyle="bold"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF"/>
+
+            <View
+                android:layout_width="12dp"
+                android:layout_height="1dp"/>
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

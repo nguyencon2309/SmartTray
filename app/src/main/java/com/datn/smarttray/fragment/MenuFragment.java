@@ -1,5 +1,6 @@
 package com.datn.smarttray.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.datn.smarttray.DetailFoodActivity;
+import com.datn.smarttray.DetailHistoryActivity;
 import com.datn.smarttray.R;
 import com.datn.smarttray.adapter.FoodAdapter;
 import com.datn.smarttray.manager.FoodManager;
@@ -47,6 +50,12 @@ public class MenuFragment extends Fragment {
 
         return view;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        adapter.notifyDataSetChanged();
+    }
     private void initViews(View view){
         recyclerFood = view.findViewById(R.id.recyclerFood);
     }
@@ -54,7 +63,18 @@ public class MenuFragment extends Fragment {
 
         foodList = FoodManager.getFoodList();
 
-        adapter = new FoodAdapter(foodList);
+        adapter = new FoodAdapter(
+                foodList,
+                new FoodAdapter.OnFoodClickListener() {
+
+                    @Override
+                    public void onFoodClick(Food food) {
+
+                        openDetailFood(food);
+
+                    }
+                }
+        );
 
         recyclerFood.setLayoutManager(
                 new LinearLayoutManager(requireContext())
@@ -62,11 +82,17 @@ public class MenuFragment extends Fragment {
 
         recyclerFood.setAdapter(adapter);
     }
-
-
-
-
-
-
+    public void openDetailFood(Food food){
+        Intent intent =
+                new Intent(
+                        requireContext(),
+                        DetailFoodActivity.class
+                );
+        intent.putExtra(
+                "food_id",
+                food.getId()
+        );
+        startActivity(intent);
+    }
 
 }

@@ -7,7 +7,10 @@ public class Food {
     public int price;
     public String description;
     public String image;
-    public Food(){}
+
+    // BẮT BUỘC CHO FIREBASE
+    public Food() {
+    }
     public Food(String id, String classname,String vietnamese_name, int price, String description, String image) {
         this.id = id;
         this.classname = classname;
@@ -15,6 +18,12 @@ public class Food {
         this.price = price;
         this.description = description;
         this.image = image;
+    }
+    public void setPrice(int price){
+        this.price = price;
+    }
+    public void setDescription(String desc){
+        this.description = desc;
     }
     public String getNameViet(){
         return vietnamese_name;
@@ -25,4 +34,7 @@ public class Food {
     public String getImageUrl(){
         return image;
     }
+    public String getDescription(){ return description;}
+    public String getId(){ return id;}
+
 }

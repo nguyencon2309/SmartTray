@@ -19,9 +19,16 @@ public class FoodAdapter
         extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
     private List<Food> foodList;
+    private OnFoodClickListener listener;
+    public interface OnFoodClickListener{
 
-    public FoodAdapter(List<Food> foodList) {
+        void onFoodClick(Food food);
+
+    }
+
+    public FoodAdapter(List<Food> foodList,OnFoodClickListener listener) {
         this.foodList = foodList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -74,6 +81,9 @@ public class FoodAdapter
                     .error(R.drawable.ic_baseline_fastfood_24)
                     .into(holder.imgFood);
         }
+        holder.itemView.setOnClickListener(v->{
+            listener.onFoodClick(food);
+        });
 
     }
 
@@ -103,6 +113,8 @@ public class FoodAdapter
 
             txtFoodPrice =
                     itemView.findViewById(R.id.txtFoodPrice);
+
+
         }
     }
 }

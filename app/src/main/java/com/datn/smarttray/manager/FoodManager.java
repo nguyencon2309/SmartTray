@@ -4,8 +4,6 @@ package com.datn.smarttray.manager;
 import androidx.annotation.NonNull;
 
 import com.datn.smarttray.model.Food;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
@@ -17,6 +15,14 @@ public class FoodManager {
             new ArrayList<>();
 
     private static boolean isLoaded = false;
+
+    public interface FoodUpdateCallback{
+
+        void onSuccess();
+
+        void onFailed(String error);
+
+    }
 
 
     public static void loadFoods(
@@ -79,6 +85,8 @@ public class FoodManager {
     }
 
 
+
+
     public static List<Food> getFoodList() {
 
         return foodList;
@@ -102,6 +110,16 @@ public class FoodManager {
             }
         }
 
+        return null;
+    }
+
+    public static Food getFoodById(String id)
+    {
+        for(Food food : foodList){
+            if(food.getId().equals(id)){
+                return food;
+            }
+        }
         return null;
     }
     public static void refreshFoods(
@@ -160,5 +178,30 @@ public class FoodManager {
         void onLoaded(List<Food> foods);
 
         void onError(String error);
+    }
+
+    public static void updateFood(
+            Food food,
+            FoodUpdateCallback callback
+    ){
+        FirebaseDatabase
+                .getInstance()
+                .getReference("food")
+                .child(food.getId())
+                .setValue(food)
+                .addOnSuccessListener(unused -> {
+                    // update local list
+                    for(int i = 0; i < foodList.size(); i++){
+                        if(foodList.get(i).getId()
+                                .equals(food.getId())){
+                            foodList.set(i, food);
+                            break;
+                        }
+                    }
+                    callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailed(e.getMessage());
+                });
     }
 }
