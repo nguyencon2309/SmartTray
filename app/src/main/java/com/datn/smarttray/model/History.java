@@ -4,12 +4,13 @@ import android.graphics.Bitmap;
 
 import com.datn.smarttray.utils.InvoiceItem;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class History {
+public class History implements Serializable {
 
     public String imagePredict;
     public long timestamp;

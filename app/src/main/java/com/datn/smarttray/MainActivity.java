@@ -14,6 +14,7 @@ import com.datn.smarttray.fragment.MenuFragment;
 import com.datn.smarttray.fragment.ScanFragment;
 
 import com.datn.smarttray.manager.FoodManager;
+import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.utils.LabelUtils;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         ModelManager.init(this);
+        HistoryManager.init(this);
         //initFirebase();
 
     }

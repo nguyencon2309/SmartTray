@@ -1,6 +1,8 @@
 package com.datn.smarttray.utils;
 
-public class InvoiceItem {
+import java.io.Serializable;
+
+public class InvoiceItem implements Serializable {
     private String name;     // Tên món ăn
     private int quantity;    // Số lượng
     private int price;       // Đơn giá

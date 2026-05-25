@@ -475,7 +475,7 @@ public class ScanFragment extends Fragment {
     private void saveHistory(){
 
         History history = new History(saveImage(copy_image_bitmap),System.currentTimeMillis(),danhSachInvoice);
-        HistoryManager.addHistory(history);
+        HistoryManager.addHistory(requireContext(),history);
         copy_image_bitmap.recycle();
         copy_image_bitmap = null;
         setButtonPredict();

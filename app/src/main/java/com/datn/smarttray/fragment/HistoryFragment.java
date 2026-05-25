@@ -37,6 +37,13 @@ public class HistoryFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -103,7 +110,7 @@ public class HistoryFragment extends Fragment {
                 file.delete();
             }
         }
-        HistoryManager.deleteHistory(history);
+        HistoryManager.deleteHistory(requireContext(),history);
         adapter.notifyDataSetChanged();
     }
 }
