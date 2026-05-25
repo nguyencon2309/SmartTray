@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -33,7 +34,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +80,16 @@ public class ScanFragment extends Fragment {
     FrameLayout invoiceContainer;
     List<Food> listFood;
     List<InvoiceItem> danhSachInvoice;
+
+    ImageButton btnSetting;
+
+    CardView layoutSetting;
+
+    SeekBar seekYolo, seekClassifier;
+
+    TextView txtYoloValue, txtClassifierValue;
+
+    long startTime;
     private boolean isPredictMode = true;
 
 
@@ -127,6 +140,18 @@ public class ScanFragment extends Fragment {
 
         invoiceContainer =
                 view.findViewById(R.id.invoiceContainer);
+
+        btnSetting = view.findViewById(R.id.btnSetting);
+
+        layoutSetting = view.findViewById(R.id.layoutSetting);
+
+        seekYolo = view.findViewById(R.id.seekYolo);
+
+        seekClassifier = view.findViewById(R.id.seekClassifier);
+
+        txtYoloValue = view.findViewById(R.id.txtYoloValue);
+
+        txtClassifierValue = view.findViewById(R.id.txtClassifierValue);
     }
 
     private void initModels() {
@@ -181,9 +206,12 @@ public class ScanFragment extends Fragment {
             else{
                 saveHistory();
             }
-
-
         });
+        btnSetting.setOnClickListener(v->{
+            showHidenLayoutSetting();
+        });
+        setupThresholdSeekBar();
+
     }
 
     private void openGallery() {
@@ -271,6 +299,7 @@ public class ScanFragment extends Fragment {
     }*/
 
     private void analyzeImage() {
+        startTime = System.currentTimeMillis();
         Bitmap imagePredict = image_predict;
         if (imagePredict == null) {
 
@@ -296,6 +325,8 @@ public class ScanFragment extends Fragment {
         txtLog.setVisibility(View.VISIBLE);
         txtLog.setText("Đang phân tích...");
 
+        setThresholdModel();
+
         List<Recognition> results= yolOv11Detector.detectObjects(imagePredict);
 
         if (results == null || results.isEmpty()) {
@@ -317,9 +348,14 @@ public class ScanFragment extends Fragment {
     }
     private void drawBox(String nameFood,RectF loc,Canvas canvas){
         String[] splitArray = nameFood.split(" ");
-
-        String tenMonAnGoc = listFood.get(Integer.parseInt(splitArray[0])).getNameViet();
-
+        int index = Integer.parseInt(splitArray[0]);
+        String tenMonAnGoc;
+        if(index==-1){
+            tenMonAnGoc = "Unknow";
+        }
+        else{
+            tenMonAnGoc = listFood.get(index).getNameViet();
+        }
         Paint paintBox = new Paint();
         paintBox.setColor(Color.RED);
         paintBox.setStyle(Paint.Style.STROKE);
@@ -349,9 +385,17 @@ public class ScanFragment extends Fragment {
 
     private Map<String, InvoiceItem> addInvoiceItem(Map<String, InvoiceItem> mapBill, String FoodRatio){
         String[] splitArray = FoodRatio.split(" ");
-
-        String tenMonAnGoc = listFood.get(Integer.parseInt(splitArray[0])).getNameViet();
-        int price = listFood.get(Integer.parseInt(splitArray[0])).getPrice();
+        int index = Integer.parseInt(splitArray[0]);
+        String tenMonAnGoc;
+        int price;
+        if(index==-1){
+            tenMonAnGoc = "Unknow";
+            price = 0;
+        }
+        else{
+            tenMonAnGoc = listFood.get(index).getNameViet();
+            price = listFood.get(Integer.parseInt(splitArray[0])).getPrice();
+        }
         if (mapBill.containsKey(tenMonAnGoc)) {
             InvoiceItem itemCu = mapBill.get(tenMonAnGoc);
             mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, itemCu.getQuantity() + 1, price));
@@ -387,11 +431,15 @@ public class ScanFragment extends Fragment {
             }
 
         }
+        long duration = System.currentTimeMillis()-startTime;
         updateLayoutInvoice(mapBill);
         imageView.setImageBitmap(mutableBitmap);
         image_predict.recycle();
         image_predict = null;
         copy_image_bitmap = mutableBitmap;
+        txtLog.setVisibility(View.VISIBLE);
+        txtLog.setText("Time predict "+duration+" ms");
+
 
         setButtonSave();
     }
@@ -496,4 +544,81 @@ public class ScanFragment extends Fragment {
         resized = null;
         return path;
     }
+    private void showHidenLayoutSetting(){
+        if(layoutSetting.getVisibility() == View.GONE){
+            layoutSetting.setVisibility(View.VISIBLE);
+        }else
+        {
+            layoutSetting.setVisibility(View.GONE);
+        }
+    }
+    private void setupThresholdSeekBar(){
+        seekYolo.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(
+                            SeekBar seekBar,
+                            int progress,
+                            boolean fromUser
+                    ) {
+                        float threshold = progress / 100f;
+                        txtYoloValue.setText(
+                                String.format("%.2f", threshold)
+                        );
+                    }
+                    @Override
+                    public void onStartTrackingTouch(
+                            SeekBar seekBar
+                    ) {
+                    }
+                    @Override
+                    public void onStopTrackingTouch(
+                            SeekBar seekBar
+                    ) {
+                    }
+                }
+        );
+        seekClassifier.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(
+                            SeekBar seekBar,
+                            int progress,
+                            boolean fromUser
+                    ) {
+                        float threshold = progress / 100f;
+                        txtClassifierValue.setText(
+                                String.format("%.2f", threshold)
+                        );
+
+                    }
+                    @Override
+                    public void onStartTrackingTouch(
+                            SeekBar seekBar
+                    ) {
+                    }
+                    @Override
+                    public void onStopTrackingTouch(
+                            SeekBar seekBar
+                    ) {
+                    }
+                }
+        );
+    }
+    private float getFloatFromTextView(TextView textView){
+        try {
+            String textValue = textView.getText().toString();
+            textValue = textValue.replace(',', '.');
+            float threshold = Float.parseFloat(textValue);
+            return threshold;
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return 0.0f;
+    }
+    private void setThresholdModel(){
+        yolOv11Detector.setTheshold(getFloatFromTextView(txtYoloValue));
+        efficientNetClassifier.setThreshold(getFloatFromTextView(txtClassifierValue));
+    }
+
 }

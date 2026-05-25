@@ -5,7 +5,6 @@ import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 
-import com.datn.smarttray.manager.FoodManager;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -14,17 +13,19 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.util.List;
 
 public class EfficientNetClassifier {
-    private int INPUT_SIZE = 240; // EfficientNet-B0 thường dùng 224x224
+    private int INPUT_SIZE = 224; // EfficientNet-B0 thường dùng 224x224
     private Interpreter tflite;
     private int sizeFoodList = 40;
+    private float THRESHOLD ;
 
     public EfficientNetClassifier(Context context, String modelPath) throws IOException {
         this.tflite = new Interpreter(loadModelFile(context.getAssets(),modelPath));
-
-
+    }
+    public void setThreshold(float threshold){this.THRESHOLD=threshold;}
+    public float getTHRESHOLD(){
+        return THRESHOLD;
     }
     private java.nio.MappedByteBuffer loadModelFile(AssetManager assetManager, String modelPath) throws IOException {
         AssetFileDescriptor fileDescriptor = assetManager.openFd(modelPath);
@@ -72,6 +73,7 @@ public class EfficientNetClassifier {
 
         // Trả về tên món ăn nếu độ tự tin tốt, ngược lại trả về không xác định
         //return maxScore > 0.5f ? labelList.get(maxIndex) : "Chưa rõ món";
+        if (maxScore<THRESHOLD) maxIndex=-1;
         String scoreDinhDang = String.format(java.util.Locale.US, "%.2f", maxScore) + "f";
         return maxIndex + " " + scoreDinhDang;
     }

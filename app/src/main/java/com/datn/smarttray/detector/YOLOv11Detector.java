@@ -20,12 +20,15 @@ import java.util.List;
 public class YOLOv11Detector {
     private Interpreter tflite;
     private final int INPUT_SIZE = 640;
-    private final float CONFIDENCE_THRESHOLD = 0.4f;
+    private float CONFIDENCE_THRESHOLD ;
 
     public YOLOv11Detector(AssetManager assetManager, String modelPath) throws IOException{
         Interpreter.Options options = new Interpreter.Options();
         options.setNumThreads(4);
         tflite = new Interpreter(loadModelFile(assetManager,modelPath), options);
+    }
+    public void setTheshold(float theshold){
+        this.CONFIDENCE_THRESHOLD = theshold;
     }
     private java.nio.MappedByteBuffer loadModelFile(AssetManager assetManager, String modelPath) throws IOException {
         AssetFileDescriptor fileDescriptor = assetManager.openFd(modelPath);

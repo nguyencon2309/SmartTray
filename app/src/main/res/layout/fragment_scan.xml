@@ -79,6 +79,13 @@
                 android:textColor="#757575"
                 android:padding="20dp"
                 android:visibility="visible"/>
+            <ImageButton
+                android:id="@+id/btnSetting"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@android:drawable/ic_menu_manage"
+                android:background="@android:color/transparent"
+                android:layout_gravity="end"/>
 
             <FrameLayout
                 android:id="@+id/invoiceContainer"
@@ -86,8 +93,72 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layoutSetting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:layout_margin="12dp"
+
+        >
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- YOLO Threshold -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YOLO Threshold"
+                android:textStyle="bold"/>
+
+            <SeekBar
+                android:id="@+id/seekYolo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="40"/>
+
+            <TextView
+                android:id="@+id/txtYoloValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.40"/>
+
+            <!-- Classifier Threshold -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EfficientNet Threshold"
+                android:textStyle="bold"
+                android:layout_marginTop="12dp"/>
+
+            <SeekBar
+                android:id="@+id/seekClassifier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="80"/>
+
+            <TextView
+                android:id="@+id/txtClassifierValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.80"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </FrameLayout>
 
