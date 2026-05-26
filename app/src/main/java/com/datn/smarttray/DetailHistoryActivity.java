@@ -60,6 +60,8 @@ public class DetailHistoryActivity extends AppCompatActivity {
                 .placeholder(R.drawable.ic_baseline_fastfood_24)
                 .error(R.drawable.ic_baseline_fastfood_24)
                 .into(imgPredict);
+
+
     }
     private void initInvoiceFragment() {
 

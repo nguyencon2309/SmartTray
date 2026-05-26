@@ -389,22 +389,20 @@ public class ScanFragment extends Fragment {
         String tenMonAnGoc;
         int price;
         if(index==-1){
-            tenMonAnGoc = "Unknow";
-            price = 0;
+            return mapBill;
         }
         else{
             tenMonAnGoc = listFood.get(index).getNameViet();
             price = listFood.get(Integer.parseInt(splitArray[0])).getPrice();
         }
+        String idFood = listFood.get(index).getId();
         if (mapBill.containsKey(tenMonAnGoc)) {
             InvoiceItem itemCu = mapBill.get(tenMonAnGoc);
-            mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, itemCu.getQuantity() + 1, price));
+            mapBill.put(tenMonAnGoc, new InvoiceItem(idFood,tenMonAnGoc, itemCu.getQuantity() + 1, price));
         } else {
             // Nếu là món mới xuất hiện thì đặt số lượng là 1
-            mapBill.put(tenMonAnGoc, new InvoiceItem(tenMonAnGoc, 1, price));
+            mapBill.put(tenMonAnGoc, new InvoiceItem(idFood,tenMonAnGoc, 1, price));
         }
-
-
        return mapBill;
     }
 
@@ -434,8 +432,7 @@ public class ScanFragment extends Fragment {
         long duration = System.currentTimeMillis()-startTime;
         updateLayoutInvoice(mapBill);
         imageView.setImageBitmap(mutableBitmap);
-        image_predict.recycle();
-        image_predict = null;
+
         copy_image_bitmap = mutableBitmap;
         txtLog.setVisibility(View.VISIBLE);
         txtLog.setText("Time predict "+duration+" ms");

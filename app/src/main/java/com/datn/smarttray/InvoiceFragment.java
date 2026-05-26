@@ -1,5 +1,6 @@
 package com.datn.smarttray;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -126,6 +127,11 @@ public class InvoiceFragment extends Fragment {
             );
 
             tvName.setWidth(405);
+            tvName.setOnClickListener(v->{
+                //go to detail food;
+
+                openFoodDetailActivity(item.getIdFood());
+            });
 
             // 2. Cột Số lượng
             TextView tvQty = new TextView(getContext());
@@ -164,5 +170,17 @@ public class InvoiceFragment extends Fragment {
 
         // Cập nhật text tổng tiền hiển thị công khai
         txtTongTien.setText(String.format(Locale.US, "%,d VNĐ", tongtien));
+    }
+    public void openFoodDetailActivity(String id){
+        Intent intent =
+                new Intent(
+                        requireContext(),
+                        DetailFoodActivity.class
+                );
+        intent.putExtra(
+                "food_id",
+                id
+        );
+        startActivity(intent);
     }
 }

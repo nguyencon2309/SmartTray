@@ -140,7 +140,9 @@
                 android:text="UPDATE"
                 android:textStyle="bold"
                 android:backgroundTint="#4CAF50"
-                android:textColor="#FFFFFF"/>
+                android:textColor="#FFFFFF"
+
+                />
 
             <View
                 android:layout_width="12dp"

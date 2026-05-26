@@ -3,6 +3,7 @@ package com.datn.smarttray;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -88,6 +89,21 @@ public class DetailFoodActivity extends AppCompatActivity {
                 Integer.parseInt(
                         txtFoodPrice.getText().toString()
                 );
+
+        if(!description.equals(food.getDescription()) || (price!=food.getPrice())){
+            callUpdateFood(description,price);
+        }
+        else{
+            Toast.makeText(
+                    DetailFoodActivity.this,
+                    "Không có gì thay đổi",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+        btnUpdate.setText("UPDATE");
+
+    }
+    public void callUpdateFood(String description,int price){
         food.setDescription(description);
         food.setPrice(price);
         FoodManager.updateFood(
@@ -112,7 +128,5 @@ public class DetailFoodActivity extends AppCompatActivity {
                     }
                 }
         );
-        btnUpdate.setText("UPDATE");
-
     }
 }
