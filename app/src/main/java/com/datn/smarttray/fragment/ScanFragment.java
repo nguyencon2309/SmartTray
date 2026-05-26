@@ -44,6 +44,7 @@ import com.datn.smarttray.InvoiceFragment;
 import com.datn.smarttray.R;
 import com.datn.smarttray.data.Recognition;
 import com.datn.smarttray.detector.EfficientNetClassifier;
+import com.datn.smarttray.detector.FoodClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
 import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.manager.HistoryManager;
@@ -68,10 +69,10 @@ public class ScanFragment extends Fragment {
 
 
     ImageView imageView;
-    Button galleryBtn, cameraBtn, analystBtn;
+    Button analystBtn;
     Uri image_uri;
     YOLOv11Detector yolOv11Detector;
-    EfficientNetClassifier efficientNetClassifier;
+    FoodClassifier efficientNetClassifier;
     Bitmap image_predict,copy_image_bitmap;
     TextView txtLog;
 
@@ -81,7 +82,7 @@ public class ScanFragment extends Fragment {
     List<Food> listFood;
     List<InvoiceItem> danhSachInvoice;
 
-    ImageButton btnSetting;
+    ImageButton btnSetting,galleryBtn, cameraBtn;
 
     CardView layoutSetting;
 
@@ -130,9 +131,9 @@ public class ScanFragment extends Fragment {
 
         imageView = view.findViewById(R.id.imageView);
 
-        galleryBtn = view.findViewById(R.id.button);
+        galleryBtn = view.findViewById(R.id.imageBtnGallery);
 
-        cameraBtn = view.findViewById(R.id.button2);
+        cameraBtn = view.findViewById(R.id.imageBtnCamera);
 
         analystBtn = view.findViewById(R.id.button3);
 

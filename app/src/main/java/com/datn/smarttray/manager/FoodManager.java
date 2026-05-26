@@ -3,6 +3,7 @@ package com.datn.smarttray.manager;
 
 import androidx.annotation.NonNull;
 
+import com.datn.smarttray.enums.ModelType;
 import com.datn.smarttray.model.Food;
 import com.google.firebase.database.*;
 
@@ -29,6 +30,13 @@ public class FoodManager {
             FoodLoadCallback callback
     ) {
 
+        String tableName;
+        if(AppConfigManager.getCurrentModel()
+                == ModelType.FOOD40_MODEL){
+            tableName = "food";
+        }else{
+            tableName = "food_101";
+        }
         // Nếu đã load rồi thì trả luôn
         if (isLoaded) {
 
@@ -42,7 +50,7 @@ public class FoodManager {
         DatabaseReference foodRef =
                 FirebaseDatabase
                         .getInstance()
-                        .getReference("food");
+                        .getReference(tableName);
 
         foodRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -126,11 +134,19 @@ public class FoodManager {
             FoodLoadCallback callback
     ) {
 
+        String tableName;
+        if(AppConfigManager.getCurrentModel()
+                == ModelType.FOOD40_MODEL){
+            tableName = "food";
+        }else{
+            tableName = "food_101";
+        }
+
         //FirebaseDatabase.getInstance();
         DatabaseReference foodRef =
                 FirebaseDatabase
                         .getInstance()
-                        .getReference("food");
+                        .getReference(tableName);
 
         foodRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -184,9 +200,16 @@ public class FoodManager {
             Food food,
             FoodUpdateCallback callback
     ){
+        String tableName;
+        if(AppConfigManager.getCurrentModel()
+                == ModelType.FOOD40_MODEL){
+            tableName = "food";
+        }else{
+            tableName = "food_101";
+        }
         FirebaseDatabase
                 .getInstance()
-                .getReference("food")
+                .getReference(tableName)
                 .child(food.getId())
                 .setValue(food)
                 .addOnSuccessListener(unused -> {

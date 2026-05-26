@@ -14,19 +14,18 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
-public class EfficientNetClassifier {
+public class EfficientNetClassifier implements FoodClassifier{
     private int INPUT_SIZE = 224; // EfficientNet-B0 thường dùng 224x224
     private Interpreter tflite;
     private int sizeFoodList = 40;
     private float THRESHOLD ;
 
-    public EfficientNetClassifier(Context context, String modelPath) throws IOException {
+    public EfficientNetClassifier(Context context, String modelPath,int sizeFoodList) throws IOException {
         this.tflite = new Interpreter(loadModelFile(context.getAssets(),modelPath));
+        this.sizeFoodList = sizeFoodList;
     }
     public void setThreshold(float threshold){this.THRESHOLD=threshold;}
-    public float getTHRESHOLD(){
-        return THRESHOLD;
-    }
+    public float getThreshold(){return THRESHOLD;}
     private java.nio.MappedByteBuffer loadModelFile(AssetManager assetManager, String modelPath) throws IOException {
         AssetFileDescriptor fileDescriptor = assetManager.openFd(modelPath);
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
@@ -49,7 +48,7 @@ public class EfficientNetClassifier {
 
         inputBuffer.rewind();
         for (int pixelValue : intValues) {
-            // Chuẩn hóa màu về khoảng [0, 1] giống như lúc train bên Python
+
             inputBuffer.putFloat(((pixelValue >> 16) & 0xFF) );
             inputBuffer.putFloat(((pixelValue >> 8) & 0xFF) );
             inputBuffer.putFloat((pixelValue & 0xFF));

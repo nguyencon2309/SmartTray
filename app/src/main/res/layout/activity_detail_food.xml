@@ -46,6 +46,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="20dp">
+                <!-- Vietnamese Name -->
+                <TextView
+                    android:id="@+id/txtFoodNameClass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ComTam"
+                    android:textSize="16sp"
+                    />
 
                 <!-- Vietnamese Name -->
 
@@ -112,12 +120,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:enabled="false"
                     android:lineSpacingExtra="4dp"
                     android:text="Món cơm truyền thống Việt Nam..."
                     android:textColor="#444444"
                     android:textSize="16sp"
-                    android:enabled="false"
-                    />
+                    tools:ignore="TouchTargetSizeCheck" />
 
             </LinearLayout>
 

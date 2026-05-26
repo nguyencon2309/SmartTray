@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         loadFragment(new HomeFragment());
 
+
         bottomNav.setOnItemSelectedListener(item -> {
 
             Fragment fragment = null;
@@ -76,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
             FirebaseApp.initializeApp(this, options);
         }
+
         FoodManager.loadFoods(
                 new FoodManager.FoodLoadCallback() {
-
                     @Override
                     public void onLoaded(
                             List<Food> foods
@@ -101,12 +102,16 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        ModelManager.init(this);
+        ModelManager.initYolo(this);
+        ModelManager.initClassifier(this);
         HistoryManager.init(this);
+
+
         //initFirebase();
 
     }
     public void initFirebase(){
+
         if (FirebaseApp.getApps(this).isEmpty()) {
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setApplicationId("1:137213055582:android:fe8956bd0751427b5b9acf")
@@ -117,22 +122,23 @@ public class MainActivity extends AppCompatActivity {
 
             FirebaseApp.initializeApp(this, options);
         }
-        mDatabase = FirebaseDatabase.getInstance().getReference("food");
+
+        mDatabase = FirebaseDatabase.getInstance().getReference("food_101");
 
 
 
 
-        /*
-        List<String> danhSachMonAn = LabelUtils.loadLabelList(this,"labels.txt");
-        List<String> danhSachMonAn_Viet = LabelUtils.loadLabelList(this,"labels_viet.txt");
-        List<String> listImageUrl = LabelUtils.loadLabelList(this,"image.txt");
-        for(int i=0;i<40;i++){
+
+        List<String> danhSachMonAn = LabelUtils.loadLabelList(this,"labels_101.txt");
+        List<String> danhSachMonAn_Viet = LabelUtils.loadLabelList(this,"labels_viet_101.txt");
+        //List<String> listImageUrl = LabelUtils.loadLabelList(this,"image.txt");
+        for(int i=0;i<101;i++){
             String foodId = mDatabase.push().getKey();
             Random random = new Random();
             int price = (random.nextInt(6)+5)*1000;
-            Food food = new Food(foodId,danhSachMonAn.get(i),danhSachMonAn_Viet.get(i),price,"chua co mo ta",listImageUrl.get(i));
+            Food food = new Food(foodId,danhSachMonAn.get(i),danhSachMonAn_Viet.get(i),price,"chua co mo ta","abc");
             mDatabase.child(foodId).setValue(food);
-        }*/
+        }
 
     }
 

@@ -49,6 +49,13 @@
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+        <!-- Switch button -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"/>
 
         <!-- AI Technology -->
 

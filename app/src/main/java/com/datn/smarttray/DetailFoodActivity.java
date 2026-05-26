@@ -22,7 +22,7 @@ public class DetailFoodActivity extends AppCompatActivity {
 
     ImageView imgFood;
 
-    TextView txtFoodName;
+    TextView txtFoodName,txtFoodNameClass;
     EditText txtFoodPrice;
 
     EditText txtDescription;
@@ -38,6 +38,7 @@ public class DetailFoodActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail_food);
         imgFood = findViewById(R.id.imgFood);
         txtFoodName = findViewById(R.id.txtFoodName);
+        txtFoodNameClass = findViewById(R.id.txtFoodNameClass);
         txtFoodPrice = findViewById(R.id.txtFoodPrice);
         txtDescription = findViewById(R.id.txtDescription);
         btnUpdate = findViewById(R.id.btnUpdate);
@@ -55,6 +56,7 @@ public class DetailFoodActivity extends AppCompatActivity {
 
 
         txtFoodName.setText(food.getNameViet());
+        txtFoodNameClass.setText(food.getClassName());
         txtFoodPrice.setText(food.getPrice()+"");
         txtDescription.setText(food.getDescription());
         Glide.with(this)

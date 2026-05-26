@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="12dp"
+            >
 
             <ImageView
                 android:id="@+id/imageView"
@@ -40,12 +41,14 @@
                     android:layout_marginTop="20dp"/>
 
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:layout_marginBottom="12dp"
+                android:visibility="gone"
                 >
                 <Button
                     android:id="@+id/button"
@@ -69,6 +72,36 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"
+                android:layout_marginTop="20dp"
+                >
+
+                <ImageButton
+                    android:id="@+id/imageBtnGallery"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#5166D3"
+                    android:src="@drawable/ic_baseline_image_24"
+                    tools:ignore="SpeakableTextPresentCheck"></ImageButton>
+                <View
+                    android:layout_width="160dp"
+                    android:layout_height="10dp"
+                />
+
+                <ImageButton
+                    android:id="@+id/imageBtnCamera"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:background="#5166D3"
+                    android:src="@drawable/ic_baseline_camera_24"
+                    tools:ignore="SpeakableTextPresentCheck"></ImageButton>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/txtView"
                 android:layout_width="match_parent"
@@ -79,13 +112,15 @@
                 android:textColor="#757575"
                 android:padding="20dp"
                 android:visibility="visible"/>
+
             <ImageButton
                 android:id="@+id/btnSetting"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@android:drawable/ic_menu_manage"
+                android:layout_gravity="end"
                 android:background="@android:color/transparent"
-                android:layout_gravity="end"/>
+                android:src="@android:drawable/ic_menu_manage"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <FrameLayout
                 android:id="@+id/invoiceContainer"
