@@ -3,7 +3,7 @@ package com.datn.smarttray.model;
 public class Food {
     public String id;
     public String className;
-    public String vietnamese_name;
+    public String nameViet;
     public int price;
     public String description;
     public String image;
@@ -11,10 +11,10 @@ public class Food {
     // BẮT BUỘC CHO FIREBASE
     public Food() {
     }
-    public Food(String id, String className,String vietnamese_name, int price, String description, String image) {
+    public Food(String id, String className,String nameViet, int price, String description, String image) {
         this.id = id;
         this.className = className;
-        this.vietnamese_name = vietnamese_name;
+        this.nameViet = nameViet;
         this.price = price;
         this.description = description;
         this.image = image;
@@ -26,7 +26,7 @@ public class Food {
         this.description = desc;
     }
     public String getNameViet(){
-        return vietnamese_name;
+        return nameViet;
     }
     public String getClassName(){return className;}
     public int getPrice(){
