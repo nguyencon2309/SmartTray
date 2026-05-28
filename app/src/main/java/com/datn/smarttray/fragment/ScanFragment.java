@@ -43,14 +43,12 @@ import android.widget.Toast;
 import com.datn.smarttray.InvoiceFragment;
 import com.datn.smarttray.R;
 import com.datn.smarttray.data.Recognition;
-import com.datn.smarttray.detector.EfficientNetClassifier;
 import com.datn.smarttray.detector.FoodClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
-import com.datn.smarttray.manager.FoodManager;
-import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.repository.FoodRepository;
 import com.datn.smarttray.repository.HistoryRepository;
 import com.datn.smarttray.utils.FileUtil;
 import com.datn.smarttray.utils.ImageStorageUtil;
@@ -168,7 +166,7 @@ public class ScanFragment extends Fragment {
         yolOv11Detector = ModelManager.getYoloDetector();
 
         efficientNetClassifier = ModelManager.getClassifier();
-        listFood = FoodManager.getFoodList();
+        listFood = FoodRepository.getCachedFoods();
     }
 
     private void initInvoiceFragment() {
@@ -213,7 +211,11 @@ public class ScanFragment extends Fragment {
                 analyzeImage();
             }
             else{
-                saveHistory();
+                try {
+                    saveHistory();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         btnSetting.setOnClickListener(v->{
@@ -526,19 +528,11 @@ public class ScanFragment extends Fragment {
         }
         return  null;
     }
-    private void saveHistory(){
 
-        History history = new History(saveImage(copy_image_bitmap),System.currentTimeMillis(),danhSachInvoice);
-        HistoryManager.addHistory(requireContext(),history);
-        copy_image_bitmap.recycle();
-        copy_image_bitmap = null;
-        setButtonPredict();
-
-    }
-    private void saveHistory(Bitmap bitmap) throws IOException {
+    private void saveHistory() throws IOException {
         Bitmap resized =
                 Bitmap.createScaledBitmap(
-                        bitmap,
+                        copy_image_bitmap,
                         600,
                         600,
                         true
@@ -563,7 +557,10 @@ public class ScanFragment extends Fragment {
                         requestFile
                 );
 
-
+        Log.d(
+                "API_ADD",
+                new Gson().toJson(history)
+        );
         HistoryRepository.addHistory(filePart, dataBody, new HistoryRepository.SimpleCallback() {
             @Override
             public void onSuccess() {
@@ -572,6 +569,7 @@ public class ScanFragment extends Fragment {
                         "Upload thành công",
                         Toast.LENGTH_SHORT
                 ).show();
+
             }
 
             @Override
@@ -581,8 +579,15 @@ public class ScanFragment extends Fragment {
                         error,
                         Toast.LENGTH_SHORT
                 ).show();
+                Log.d(
+                        "UI_ERR",
+                        error
+                );
             }
         });
+        copy_image_bitmap.recycle();
+        copy_image_bitmap = null;
+        setButtonPredict();
     }
     private String saveImage(Bitmap bitmap){
         Bitmap resized =

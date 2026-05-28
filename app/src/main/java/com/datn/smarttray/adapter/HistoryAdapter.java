@@ -85,7 +85,7 @@ public class HistoryAdapter
         }else{
 
             Glide.with(holder.itemView.getContext())
-                    .load(new File(imagePath))
+                    .load(imagePath)
                     .placeholder(R.drawable.ic_baseline_fastfood_24)
                     .error(R.drawable.ic_baseline_fastfood_24)
                     .into(holder.imgPredict);

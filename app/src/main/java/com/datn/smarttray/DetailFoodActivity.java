@@ -1,11 +1,9 @@
 package com.datn.smarttray;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,13 +11,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.datn.smarttray.manager.FoodManager;
-import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.model.Food;
-import com.datn.smarttray.model.History;
 import com.datn.smarttray.repository.FoodRepository;
+import com.google.gson.Gson;
 
-import java.io.File;
 import java.util.List;
 
 public class DetailFoodActivity extends AppCompatActivity {
@@ -50,7 +45,7 @@ public class DetailFoodActivity extends AppCompatActivity {
 
         String foodId =
                 getIntent().getStringExtra("food_id");
-        food = FoodManager.getFoodById(foodId);
+        food = FoodRepository.getFoodLocalById(foodId);
 
         if(food == null) {
 
@@ -113,29 +108,6 @@ public class DetailFoodActivity extends AppCompatActivity {
     public void callUpdateFood(String description,int price){
         food.setDescription(description);
         food.setPrice(price);
-
-        /*FoodManager.updateFood(
-                food,
-                new FoodManager.FoodUpdateCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(
-                                DetailFoodActivity.this,
-                                "Update thành công",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                        finish();
-                    }
-                    @Override
-                    public void onFailed(String error) {
-                        Toast.makeText(
-                                DetailFoodActivity.this,
-                                error,
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
-                }
-        );*/
         FoodRepository.updateFood(food, new FoodRepository.SimpleCallback() {
             @Override
             public void onSuccess() {
@@ -160,6 +132,10 @@ public class DetailFoodActivity extends AppCompatActivity {
                         "Error "+ error,
                         Toast.LENGTH_SHORT
                 ).show();
+                Log.d(
+                        "UI_ERR",
+                        error
+                );
             }
         });
     }

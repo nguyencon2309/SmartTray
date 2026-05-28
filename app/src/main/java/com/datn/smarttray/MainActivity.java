@@ -1,41 +1,35 @@
 package com.datn.smarttray;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.datn.smarttray.adapter.FoodAdapter;
 import com.datn.smarttray.fragment.HistoryFragment;
 import com.datn.smarttray.fragment.HomeFragment;
 import com.datn.smarttray.fragment.MenuFragment;
 import com.datn.smarttray.fragment.ScanFragment;
 
-import com.datn.smarttray.manager.FoodManager;
-import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.History;
 import com.datn.smarttray.repository.FoodRepository;
-import com.datn.smarttray.utils.LabelUtils;
+import com.datn.smarttray.repository.HistoryRepository;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.List;
-import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
 
 
     BottomNavigationView bottomNav;
-    DatabaseReference mDatabase;
+    private static boolean appReady = false;
+
 
 
     @Override
@@ -50,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         bottomNav.setOnItemSelectedListener(item -> {
+            if (!appReady) {
+                Toast.makeText(
+                        this,
+                        "Đang tải dữ liệu...",
+                        Toast.LENGTH_SHORT
+                    ).show();
+                return false;
+            }
 
             Fragment fragment = null;
 
@@ -62,95 +64,21 @@ public class MainActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.nav_history) {
                 fragment = new HistoryFragment();
             }
-
+            /*if (item.getItemId() == R.id.nav_home) {
+                fragment = new HomeFragment();
+            } else if (item.getItemId() == R.id.nav_history) {
+                fragment = new HistoryFragment();
+            }*/
             return loadFragment(fragment);
         });
+        preload();
         //call api food
-        FoodRepository.getFoods(
-                new FoodRepository.FoodCallback() {
-                    @Override
-                    public void onSuccess(
-                            List<Food> foods
-                    ) {
-
-                    }
-                    @Override
-                    public void onError(String error) {
-                    }
-                }
-        );
-
-
-        /*
-        if (FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setApplicationId("1:137213055582:android:fe8956bd0751427b5b9acf")
-                    .setApiKey("AIzaSyCDMD2iiIg5gRfkw-qEkhrG4ZNTJDNJVVk")
-                    .setDatabaseUrl("https://smarttray-95dc4-default-rtdb.firebaseio.com")
-                    .setProjectId("smarttray-95dc4")
-                    .build();
-
-            FirebaseApp.initializeApp(this, options);
-        }*/
-        /*
-        FoodManager.loadFoods(
-                new FoodManager.FoodLoadCallback() {
-                    @Override
-                    public void onLoaded(
-                            List<Food> foods
-                    ) {
-                        Log.d(
-                                "FOOD_MANAGER",
-                                "Loaded: " + foods.size()
-                        );
-                    }
-                    @Override
-                    public void onError(String error) {
-                        Log.e(
-                                "FOOD_MANAGER",
-                                error
-                        );
-                    }
-                }
-        );*/
-
-        ModelManager.initYolo(this);
-        ModelManager.initClassifier(this);
-        HistoryManager.init(this);
-    }
-    public void initFirebase(){
-
-        if (FirebaseApp.getApps(this).isEmpty()) {
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setApplicationId("1:137213055582:android:fe8956bd0751427b5b9acf")
-                    .setApiKey("AIzaSyCDMD2iiIg5gRfkw-qEkhrG4ZNTJDNJVVk")
-                    .setDatabaseUrl("https://smarttray-95dc4-default-rtdb.firebaseio.com")
-                    .setProjectId("smarttray-95dc4")
-                    .build();
-
-            FirebaseApp.initializeApp(this, options);
-        }
-
-        mDatabase = FirebaseDatabase.getInstance().getReference("food_101");
 
 
 
 
-
-        List<String> danhSachMonAn = LabelUtils.loadLabelList(this,"labels_101.txt");
-        List<String> danhSachMonAn_Viet = LabelUtils.loadLabelList(this,"labels_viet_101.txt");
-        //List<String> listImageUrl = LabelUtils.loadLabelList(this,"image.txt");
-        for(int i=0;i<101;i++){
-            String foodId = mDatabase.push().getKey();
-            Random random = new Random();
-            int price = (random.nextInt(6)+5)*1000;
-            Food food = new Food(foodId,danhSachMonAn.get(i),danhSachMonAn_Viet.get(i),price,"chua co mo ta","abc");
-            mDatabase.child(foodId).setValue(food);
-        }
 
     }
-
-
 
     private boolean loadFragment(Fragment fragment) {
 
@@ -165,6 +93,130 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+    private void preload(){
+        FoodRepository.getFoods(
+                new FoodRepository.FoodCallback() {
+                    @Override
+                    public void onSuccess(
+                            List<Food> foods
+                    ) {
+                        Log.d(
+                                "MAIN_DEBUG",
+                                "LOAD FOOD SUCCESS: "
+                                        + foods.size()
+                        );
+                        HistoryRepository.getHistorys(new HistoryRepository.HistoryCallback() {
+                            @Override
+                            public void onSuccess(List<History> historys) {
+                                new Thread(() -> {
+                                    ModelManager.initYolo(MainActivity.this);
+                                    ModelManager.initClassifier(MainActivity.this);
+                                    runOnUiThread(() -> {
+                                        appReady = true;
+                                        loadFragment(
+                                                new HomeFragment()
+                                        );
+                                    });
+                                }).start();
+                            }
+
+                            @Override
+                            public void onError(String error) {
+
+                            }
+                        });
+
+
+                    }
+                    @Override
+                    public void onError(String error) {
+                        Log.e(
+                                "MAIN_DEBUG",
+                                "LOAD FOOD ERROR: "
+                                        + error
+                        );
+                    }
+                }
+        );
+    }
+    private void preload2(){
+        FoodRepository.getFoods(
+                new FoodRepository.FoodCallback() {
+                    @Override
+                    public void onSuccess(
+                            List<Food> foods
+                    ) {
+                        Log.d(
+                                "MAIN_DEBUG",
+                                "LOAD FOOD SUCCESS: "
+                                        + foods.size()
+                        );
+                        /*HistoryRepository.getHistorys(new HistoryRepository.HistoryCallback() {
+                            @Override
+                            public void onSuccess(List<History> historys) {*/
+                        new Thread(() -> {
+                                    /*ModelManager.initYolo(MainActivity.this);
+                                    ModelManager.initClassifier(MainActivity.this);*/
+                            runOnUiThread(() -> {
+                                appReady = true;
+                                loadFragment(
+                                        new HomeFragment()
+                                );
+                            });
+                        }).start();/*
+                            }
+
+                            @Override
+                            public void onError(String error) {
+
+                            }
+                        });
+
+                         */
+                    }
+                    @Override
+                    public void onError(String error) {
+                        Log.e(
+                                "MAIN_DEBUG",
+                                "LOAD FOOD ERROR: "
+                                        + error
+                        );
+                    }
+                }
+        );
+    }
+    private void preload1(){
+        HistoryRepository.getHistorys(new HistoryRepository.HistoryCallback() {
+            @Override
+            public void onSuccess(List<History> historys) {
+                Log.d(
+                        "MAIN_DEBUG",
+                        "LOAD FOOD SUCCESS: "
+                                + historys.size()
+                );
+                new Thread(() -> {
+                                    /*ModelManager.initYolo(MainActivity.this);
+                                    ModelManager.initClassifier(MainActivity.this);*/
+                    runOnUiThread(() -> {
+                        appReady = true;
+                        loadFragment(
+                                new HomeFragment()
+                        );
+                    });
+                }).start();
+                            }
+
+                @Override
+                public void onError(String error) {
+                                Log.e(
+                                        "MAIN_DEBUG",
+                                        "LOAD History ERROR: "
+                                                + error
+                                );
+
+                            }
+                });
     }
     @Override
     protected void onDestroy() {

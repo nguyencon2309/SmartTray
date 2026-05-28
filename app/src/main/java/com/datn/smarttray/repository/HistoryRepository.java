@@ -1,5 +1,7 @@
 package com.datn.smarttray.repository;
 
+import android.util.Log;
+
 import com.datn.smarttray.api.ApiClient;
 import com.datn.smarttray.api.HistoryApiService;
 import com.datn.smarttray.model.Food;
@@ -28,6 +30,8 @@ public class HistoryRepository {
             callback.onSuccess(historyList);
             return;
         }
+        Log.d("API_DEBUG", "CALL API START");
+
         api.getHistorys()
                 .enqueue(new Callback<List<History>>() {
                     @Override
@@ -35,12 +39,32 @@ public class HistoryRepository {
                             Call<List<History>> call,
                             Response<List<History>> response
                     ) {
+                        Log.d(
+                                "API_DEBUG",
+                                "CODE: " + response.code()
+                        );
+
+                        Log.d(
+                                "API_DEBUG",
+                                "BODY NULL: " + (response.body() == null)
+                        );
                         if(response.isSuccessful()
                                 && response.body() != null){
+                            Log.d(
+                                    "API_DEBUG",
+                                    "SIZE: " + response.body().size()
+                            );
+
+                            isLoaded = true;
                             historyList.clear();
                             historyList.addAll(response.body());
                             callback.onSuccess(historyList );
-                            isLoaded = true;
+                        }
+                        else{
+                            Log.e(
+                                    "API_DEBUG",
+                                    "RESPONSE FAIL"
+                            );
                         }
                     }
 
@@ -49,7 +73,10 @@ public class HistoryRepository {
                             Call<List<History>> call,
                             Throwable t
                     ) {
-
+                        Log.e(
+                                "API_DEBUG",
+                                "FAIL: " + t.getMessage()
+                        );
                         callback.onError(
                                 t.getMessage()
                         );
@@ -130,10 +157,47 @@ public class HistoryRepository {
                     Call<Void> call,
                     Response<Void> response
             ) {
+                Log.d(
+                        "API_AD",
+                        "CODE: " + response.code()
+                );
 
                 if(response.isSuccessful()){
+                    refreshHistory(new HistoryCallback() {
+                        @Override
+                        public void onSuccess(List<History> historys) {
+                            callback.onSuccess();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            callback.onError(error);
+                        }
+                    });
                     isLoaded = false;
                     callback.onSuccess();
+                }
+                else{
+                    try {
+
+                        Log.e(
+                                "API_ADD",
+                                "ERROR BODY: "
+                                        + response.errorBody().string()
+                        );
+
+                    } catch (Exception e) {
+
+                        Log.e(
+                                "API_ADD",
+                                e.getMessage()
+                        );
+                    }
+
+                    callback.onError(
+                            "Response fail: "
+                                    + response.code()
+                    );
                 }
             }
 
@@ -142,6 +206,10 @@ public class HistoryRepository {
                     Call<Void> call,
                     Throwable t
             ) {
+                Log.e(
+                        "API_ADD",
+                        "FAIL: " + t.toString()
+                );
 
                 callback.onError(
                         t.getMessage()
@@ -163,7 +231,7 @@ public class HistoryRepository {
                             Call<Void> call,
                             Response<Void> response
                     ) {
-                        isLoaded = false;
+
                         callback.onSuccess();
                     }
 

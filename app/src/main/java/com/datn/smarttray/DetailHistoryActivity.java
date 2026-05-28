@@ -3,19 +3,14 @@ package com.datn.smarttray;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.datn.smarttray.manager.HistoryManager;
-import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
-import com.datn.smarttray.utils.InvoiceItem;
+import com.datn.smarttray.repository.HistoryRepository;
 
 import java.io.File;
-import java.util.List;
 
 public class DetailHistoryActivity extends AppCompatActivity {
 
@@ -44,7 +39,7 @@ public class DetailHistoryActivity extends AppCompatActivity {
         String historyId =
                 getIntent().getStringExtra("history_id");
         History history =
-                HistoryManager.findHistoryById(historyId);
+                HistoryRepository.getHistoryLocalById(historyId);
 
         if(history == null) {
 
@@ -56,7 +51,7 @@ public class DetailHistoryActivity extends AppCompatActivity {
 
         txtTime.setText(history.getLocalTime());
         Glide.with(this)
-                .load(new File(history.getImagePredict()))
+                .load(history.getImagePredict())
                 .placeholder(R.drawable.ic_baseline_fastfood_24)
                 .error(R.drawable.ic_baseline_fastfood_24)
                 .into(imgPredict);

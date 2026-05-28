@@ -12,10 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.datn.smarttray.DetailFoodActivity;
-import com.datn.smarttray.DetailHistoryActivity;
 import com.datn.smarttray.R;
 import com.datn.smarttray.adapter.FoodAdapter;
-import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.repository.FoodRepository;
 

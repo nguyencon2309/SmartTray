@@ -14,16 +14,11 @@ import android.widget.Toast;
 
 import com.datn.smarttray.DetailHistoryActivity;
 import com.datn.smarttray.R;
-import com.datn.smarttray.adapter.FoodAdapter;
 import com.datn.smarttray.adapter.HistoryAdapter;
-import com.datn.smarttray.manager.FoodManager;
-import com.datn.smarttray.manager.HistoryManager;
-import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
 import com.datn.smarttray.repository.HistoryRepository;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.List;
 
 

@@ -12,15 +12,19 @@ import retrofit2.http.Path;
 
 public interface FoodApiService {
 
-    @GET("foods")
-    Call<List<Food>> getFoods();
+    @GET("{collection}")
+    Call<List<Food>> getFoods(
+            @Path("collection") String collection
+    );
 
-    @GET("foods/{id}")
+    @GET("{collection}/{id}")
     Call<Food> getFoodById(
+            @Path("collection") String collection,
             @Path("id") String id
     );
-    @PUT("foods/{id}")
+    @PUT("{collection}/{id}")
     Call<Void> updateFood(
+            @Path("collection") String collection,
             @Path("id") String id,
             @Body Food food
     );

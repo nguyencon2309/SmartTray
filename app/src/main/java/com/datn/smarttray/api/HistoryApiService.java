@@ -22,7 +22,7 @@ public interface HistoryApiService {
             @Path("id") String id
     );
     @Multipart
-    @POST("history")
+    @POST("history/")
     Call<Void> addHistory(
             @Part MultipartBody.Part file,
             @Part("data") RequestBody data

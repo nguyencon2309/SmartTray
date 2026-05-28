@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.datn.smarttray.R;
 import com.datn.smarttray.enums.ModelType;
 import com.datn.smarttray.manager.AppConfigManager;
-import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 

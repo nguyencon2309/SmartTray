@@ -1,7 +1,14 @@
 package com.datn.smarttray.repository;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.util.Log;
+import android.widget.Toast;
+
 import com.datn.smarttray.api.ApiClient;
 import com.datn.smarttray.api.FoodApiService;
+import com.datn.smarttray.enums.ModelType;
+import com.datn.smarttray.manager.AppConfigManager;
 import com.datn.smarttray.model.Food;
 
 import java.util.ArrayList;
@@ -15,12 +22,21 @@ public class FoodRepository {
     private static final FoodApiService api =ApiClient.getFoodApi();
     private static final List<Food> foodList = new ArrayList<>();
     private static boolean isLoaded = false;
+    private static String getCollectionName() {
+
+        if(AppConfigManager.getCurrentModel()
+                == ModelType.FOOD101_MODEL){
+            return "food101";
+        }
+        return "foods";
+    }
     public static void getFoods(FoodCallback callback){
         if(isLoaded){
             callback.onSuccess(foodList);
             return;
         }
-        api.getFoods()
+        Log.d("API_DEBUG", "CALL API START");
+        api.getFoods(getCollectionName())
                 .enqueue(new Callback<List<Food>>() {
 
                     @Override
@@ -28,12 +44,31 @@ public class FoodRepository {
                             Call<List<Food>> call,
                             Response<List<Food>> response
                     ) {
+                        Log.d(
+                                "API_DEBUG",
+                                "CODE: " + response.code()
+                        );
+
+                        Log.d(
+                                "API_DEBUG",
+                                "BODY NULL: " + (response.body() == null)
+                        );
                         if(response.isSuccessful()
                                 && response.body() != null){
+                            Log.d(
+                                    "API_DEBUG",
+                                    "SIZE: " + response.body().size()
+                            );
+                            isLoaded = true;
                             foodList.clear();
                             foodList.addAll(response.body());
                             callback.onSuccess(foodList);
-                            isLoaded = true;
+                        }
+                        else{
+                            Log.e(
+                                    "API_DEBUG",
+                                    "RESPONSE FAIL"
+                            );
                         }
                     }
                     @Override
@@ -41,6 +76,10 @@ public class FoodRepository {
                             Call<List<Food>> call,
                             Throwable t
                     ) {
+                        Log.e(
+                                "API_DEBUG",
+                                "FAIL: " + t.getMessage()
+                        );
                         callback.onError(
                                 t.getMessage()
                         );
@@ -69,7 +108,7 @@ public class FoodRepository {
             SingleFoodCallback callback
     ){
 
-        api.getFoodById(id)
+        api.getFoodById(getCollectionName(),id)
                 .enqueue(new Callback<Food>() {
 
                     @Override
@@ -107,6 +146,7 @@ public class FoodRepository {
     ){
 
         api.updateFood(
+                getCollectionName(),
                 food.getId(),
                 food
         ).enqueue(new Callback<Void>() {
@@ -116,7 +156,16 @@ public class FoodRepository {
                     Call<Void> call,
                     Response<Void> response
             ) {
+                Log.d(
+                        "API_UPDATE",
+                        "CODE: " + response.code()
+                );
+
                 if(response.isSuccessful()){
+                    Log.d(
+                            "API_UPDATE",
+                            "UPDATE SUCCESS"
+                    );
                     for(int i = 0; i < foodList.size(); i++)
                     {
                         if(foodList.get(i).getId().equals(food.getId()))
@@ -125,8 +174,31 @@ public class FoodRepository {
                             break;
                         }
                     }
-                    isLoaded = false;
+
+                    isLoaded = true;
                     callback.onSuccess();
+                }
+                else{
+                    try {
+
+                        Log.e(
+                                "API_UPDATE",
+                                "ERROR BODY: "
+                                        + response.errorBody().string()
+                        );
+
+                    } catch (Exception e) {
+
+                        Log.e(
+                                "API_UPDATE",
+                                e.getMessage()
+                        );
+                    }
+
+                    callback.onError(
+                            "Response fail: "
+                                    + response.code()
+                    );
                 }
             }
 
@@ -135,7 +207,10 @@ public class FoodRepository {
                     Call<Void> call,
                     Throwable t
             ) {
-
+                Log.e(
+                        "API_UPDATE",
+                        "FAIL: " + t.toString()
+                );
                 callback.onError(
                         t.getMessage()
                 );

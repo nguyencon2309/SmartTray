@@ -8,6 +8,7 @@ import com.datn.smarttray.detector.FoodClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
 import com.datn.smarttray.enums.ModelType;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.repository.FoodRepository;
 import com.datn.smarttray.utils.LabelUtils;
 
 import java.io.IOException;
@@ -70,16 +71,17 @@ public class ModelManager {
             Context context,
             ReloadCallback callback
     ) {
-        FoodManager.refreshFoods(
-                new FoodManager.FoodLoadCallback() {
+        initClassifier(context);
+        FoodRepository.refreshFoods(
+                new FoodRepository.FoodCallback() {
 
                     @Override
-                    public void onLoaded(
+                    public void onSuccess(
                             List<Food> foods
                     ) {
-                        initClassifier(context);
                         callback.onSuccess();
                     }
+
                     @Override
                     public void onError(
                             String error
