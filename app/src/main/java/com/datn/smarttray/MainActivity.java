@@ -17,6 +17,7 @@ import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.repository.FoodRepository;
 import com.datn.smarttray.utils.LabelUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
@@ -64,9 +65,23 @@ public class MainActivity extends AppCompatActivity {
 
             return loadFragment(fragment);
         });
+        //call api food
+        FoodRepository.getFoods(
+                new FoodRepository.FoodCallback() {
+                    @Override
+                    public void onSuccess(
+                            List<Food> foods
+                    ) {
+
+                    }
+                    @Override
+                    public void onError(String error) {
+                    }
+                }
+        );
 
 
-
+        /*
         if (FirebaseApp.getApps(this).isEmpty()) {
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setApplicationId("1:137213055582:android:fe8956bd0751427b5b9acf")
@@ -76,39 +91,32 @@ public class MainActivity extends AppCompatActivity {
                     .build();
 
             FirebaseApp.initializeApp(this, options);
-        }
-
+        }*/
+        /*
         FoodManager.loadFoods(
                 new FoodManager.FoodLoadCallback() {
                     @Override
                     public void onLoaded(
                             List<Food> foods
                     ) {
-
                         Log.d(
                                 "FOOD_MANAGER",
                                 "Loaded: " + foods.size()
                         );
                     }
-
                     @Override
                     public void onError(String error) {
-
                         Log.e(
                                 "FOOD_MANAGER",
                                 error
                         );
                     }
                 }
-        );
+        );*/
 
         ModelManager.initYolo(this);
         ModelManager.initClassifier(this);
         HistoryManager.init(this);
-
-
-        //initFirebase();
-
     }
     public void initFirebase(){
 

@@ -51,10 +51,14 @@ import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.repository.HistoryRepository;
+import com.datn.smarttray.utils.FileUtil;
 import com.datn.smarttray.utils.ImageStorageUtil;
 import com.datn.smarttray.utils.ImageUtils;
 import com.datn.smarttray.utils.InvoiceItem;
+import com.google.gson.Gson;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,6 +67,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.Manifest;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 
 public class ScanFragment extends Fragment {
@@ -525,6 +533,56 @@ public class ScanFragment extends Fragment {
         copy_image_bitmap.recycle();
         copy_image_bitmap = null;
         setButtonPredict();
+
+    }
+    private void saveHistory(Bitmap bitmap) throws IOException {
+        Bitmap resized =
+                Bitmap.createScaledBitmap(
+                        bitmap,
+                        600,
+                        600,
+                        true
+                );
+        File file = FileUtil.bitmapToFile(requireContext(),resized);
+        History history = new History("",System.currentTimeMillis(),danhSachInvoice);
+        String json =
+                new Gson().toJson(history);
+        RequestBody dataBody =
+                RequestBody.create(
+                        MediaType.parse("application/json"),
+                        json
+        );
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("image/*"),
+                        file);
+        MultipartBody.Part filePart =
+                MultipartBody.Part.createFormData(
+                        "file",
+                        file.getName(),
+                        requestFile
+                );
+
+
+        HistoryRepository.addHistory(filePart, dataBody, new HistoryRepository.SimpleCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(
+                        requireContext(),
+                        "Upload thành công",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(
+                        requireContext(),
+                        error,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
     private String saveImage(Bitmap bitmap){
         Bitmap resized =

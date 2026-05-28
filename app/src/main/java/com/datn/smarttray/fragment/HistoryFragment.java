@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.datn.smarttray.DetailHistoryActivity;
 import com.datn.smarttray.R;
@@ -19,6 +20,7 @@ import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.repository.HistoryRepository;
 
 import java.io.File;
 import java.io.Serializable;
@@ -64,10 +66,10 @@ public class HistoryFragment extends Fragment {
     }
     private void initRecyclerView() {
 
-        historyList = HistoryManager.getHistoryList();
+        historyList = HistoryRepository.getCachedHistory();
 
         adapter = new HistoryAdapter(
-                HistoryManager.getHistoryList(),
+                historyList,
                 new HistoryAdapter.OnHistoryClickListener() {
 
                     @Override
@@ -110,7 +112,29 @@ public class HistoryFragment extends Fragment {
                 file.delete();
             }
         }
-        HistoryManager.deleteHistory(requireContext(),history);
+        //HistoryManager.deleteHistory(requireContext(),history);
+
+        HistoryRepository.deleteHistory(history.getId(), new HistoryRepository.SimpleCallback(){
+            @Override
+            public void onSuccess(){
+                historyList.remove(history);
+                adapter.notifyDataSetChanged();
+                Toast.makeText(
+                        requireContext(),
+                        "Đã xoá",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+            @Override
+            public void onError(String error){
+                Toast.makeText(
+                        requireContext(),
+                        "Error "+ error,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+
+        });
         adapter.notifyDataSetChanged();
     }
 }

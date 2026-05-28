@@ -50,7 +50,7 @@ public class ModelManager {
                 classifier =
                         new Food101ModelClassifier(
                                 context,
-                                "best_model_101.tflite",
+                                "model_select_ops.tflite",
                                 101
                         );
             }

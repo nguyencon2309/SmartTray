@@ -11,25 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FoodManager {
-
-    private static final List<Food> foodList =
-            new ArrayList<>();
-
+    private static final List<Food> foodList = new ArrayList<>();
     private static boolean isLoaded = false;
-
     public interface FoodUpdateCallback{
-
         void onSuccess();
-
         void onFailed(String error);
-
     }
-
-
     public static void loadFoods(
             FoodLoadCallback callback
     ) {
-
         String tableName;
         if(AppConfigManager.getCurrentModel()
                 == ModelType.FOOD40_MODEL){
@@ -37,21 +27,14 @@ public class FoodManager {
         }else{
             tableName = "food_101";
         }
-        // Nếu đã load rồi thì trả luôn
         if (isLoaded) {
-
             callback.onLoaded(foodList);
-
             return;
         }
-        //FirebaseDatabase.getInstance();
-
-
         DatabaseReference foodRef =
                 FirebaseDatabase
                         .getInstance()
                         .getReference(tableName);
-
         foodRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
 
@@ -59,31 +42,22 @@ public class FoodManager {
                     public void onDataChange(
                             @NonNull DataSnapshot snapshot
                     ) {
-
                         foodList.clear();
-
                         for (DataSnapshot data :
                                 snapshot.getChildren()) {
-
                             Food food =
                                     data.getValue(Food.class);
-
                             if (food != null) {
-
                                 foodList.add(food);
                             }
                         }
-
                         isLoaded = true;
-
                         callback.onLoaded(foodList);
                     }
-
                     @Override
                     public void onCancelled(
                             @NonNull DatabaseError error
                     ) {
-
                         callback.onError(
                                 error.getMessage()
                         );
@@ -91,33 +65,22 @@ public class FoodManager {
                 }
         );
     }
-
-
-
-
     public static List<Food> getFoodList() {
-
         return foodList;
     }
-
-
     public static int getSizeFoodList (){
         return foodList.size();
     }
-
     public static Food getFoodByName(
             String name
     ) {
 
         for (Food food : foodList) {
-
             if (food.getNameViet()
                     .equalsIgnoreCase(name)) {
-
                 return food;
             }
         }
-
         return null;
     }
 
@@ -141,45 +104,32 @@ public class FoodManager {
         }else{
             tableName = "food_101";
         }
-
-        //FirebaseDatabase.getInstance();
         DatabaseReference foodRef =
                 FirebaseDatabase
                         .getInstance()
                         .getReference(tableName);
-
         foodRef.addListenerForSingleValueEvent(
                 new ValueEventListener() {
-
                     @Override
                     public void onDataChange(
                             @NonNull DataSnapshot snapshot
                     ) {
-
                         foodList.clear();
-
                         for (DataSnapshot data :
                                 snapshot.getChildren()) {
-
                             Food food =
                                     data.getValue(Food.class);
-
                             if (food != null) {
-
                                 foodList.add(food);
                             }
                         }
-
                         isLoaded = true;
-
                         callback.onLoaded(foodList);
                     }
-
                     @Override
                     public void onCancelled(
                             @NonNull DatabaseError error
                     ) {
-
                         callback.onError(
                                 error.getMessage()
                         );
@@ -190,9 +140,7 @@ public class FoodManager {
 
 
     public interface FoodLoadCallback {
-
         void onLoaded(List<Food> foods);
-
         void onError(String error);
     }
 

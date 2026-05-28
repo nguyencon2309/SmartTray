@@ -1,5 +1,7 @@
 package com.datn.smarttray;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -15,8 +17,10 @@ import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.manager.HistoryManager;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.repository.FoodRepository;
 
 import java.io.File;
+import java.util.List;
 
 public class DetailFoodActivity extends AppCompatActivity {
 
@@ -30,6 +34,7 @@ public class DetailFoodActivity extends AppCompatActivity {
     Button btnUpdate;
     boolean isUpdateMode = false;
     Food food;
+    List<Food> foodList = FoodRepository.getCachedFoods();
 
 
     @Override
@@ -108,7 +113,8 @@ public class DetailFoodActivity extends AppCompatActivity {
     public void callUpdateFood(String description,int price){
         food.setDescription(description);
         food.setPrice(price);
-        FoodManager.updateFood(
+
+        /*FoodManager.updateFood(
                 food,
                 new FoodManager.FoodUpdateCallback() {
                     @Override
@@ -129,6 +135,33 @@ public class DetailFoodActivity extends AppCompatActivity {
                         ).show();
                     }
                 }
-        );
+        );*/
+        FoodRepository.updateFood(food, new FoodRepository.SimpleCallback() {
+            @Override
+            public void onSuccess() {
+                for(int i = 0; i < foodList.size(); i++){
+                    if(foodList.get(i).getId()
+                            .equals(food.getId())){
+                        foodList.set(i, food);
+                        break;
+                    }
+                }
+                Toast.makeText(
+                        DetailFoodActivity.this,
+                        "Update thành công",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(
+                        DetailFoodActivity.this,
+                        "Error "+ error,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
+
 }

@@ -17,6 +17,7 @@ import com.datn.smarttray.R;
 import com.datn.smarttray.adapter.FoodAdapter;
 import com.datn.smarttray.manager.FoodManager;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.repository.FoodRepository;
 
 import java.util.List;
 
@@ -61,17 +62,13 @@ public class MenuFragment extends Fragment {
     }
     private void initRecyclerView() {
 
-        foodList = FoodManager.getFoodList();
-
+        foodList = FoodRepository.getCachedFoods();
         adapter = new FoodAdapter(
                 foodList,
                 new FoodAdapter.OnFoodClickListener() {
-
                     @Override
                     public void onFoodClick(Food food) {
-
                         openDetailFood(food);
-
                     }
                 }
         );
