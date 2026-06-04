@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class FoodShortReponse {
     @SerializedName("id")
-    private String _id;
+    private String id;
     @SerializedName("nameViet")
     private String nameViet;
     @SerializedName("price")
@@ -13,7 +13,7 @@ public class FoodShortReponse {
     private String image;
     public FoodShortReponse(String id, String nameViet,int price,String image){
         this.image = image;
-        this._id = id;
+        this.id = id;
         this.nameViet = nameViet;
         this.price = price;
     }
@@ -23,7 +23,7 @@ public class FoodShortReponse {
     }
 
     public String getId() {
-        return _id;
+        return id;
     }
 
     public String getImage() {

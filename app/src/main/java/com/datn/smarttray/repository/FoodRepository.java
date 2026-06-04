@@ -27,7 +27,7 @@ public class FoodRepository {
 
         if(AppConfigManager.getCurrentModel()
                 == ModelType.FOOD101_MODEL){
-            return "food101";
+            return "food102";
         }
         return "foods";
     }

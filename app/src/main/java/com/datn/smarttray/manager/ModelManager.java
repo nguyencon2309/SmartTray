@@ -52,8 +52,8 @@ public class ModelManager {
                 classifier =
                         new Food101ModelClassifier(
                                 context,
-                                "model_select_ops.tflite",
-                                101
+                                "model_fp16.tflite",
+                                102
                         );
             }
         } catch (Exception e) {

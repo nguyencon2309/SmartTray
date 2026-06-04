@@ -3,6 +3,7 @@ package com.datn.smarttray;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,17 +25,17 @@ public class DetailFoodActivity extends AppCompatActivity {
 
     ImageView imgFood;
 
-    TextView txtFoodName,txtFoodNameClass;
-    EditText txtFoodPrice;
+    TextView txtFoodName,txtFoodNameClass,txtIngredients,txtRecipe, txtTips;
 
-    EditText txtDescription;
+
+    EditText editCategory,editCalories,editPrice,editDescription;
 
     Button btnUpdate;
     boolean isUpdateMode = false;
     Food food;
     List<FoodShortReponse> foodList = FoodRepository.getCachedFoods();
 
-
+//tools:context=".DetailFoodActivity"
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +43,13 @@ public class DetailFoodActivity extends AppCompatActivity {
         imgFood = findViewById(R.id.imgFood);
         txtFoodName = findViewById(R.id.txtFoodName);
         txtFoodNameClass = findViewById(R.id.txtFoodNameClass);
-        txtFoodPrice = findViewById(R.id.txtFoodPrice);
-        txtDescription = findViewById(R.id.txtDescription);
+        txtIngredients = findViewById(R.id.txtIngredients);
+        txtRecipe = findViewById(R.id.txtRecipe);
+        txtTips = findViewById(R.id.txtTips);
+        editPrice = findViewById(R.id.edtPrice);
+        editDescription = findViewById(R.id.edtDescription);
+        editCategory = findViewById(R.id.edtCategory);
+        editCalories = findViewById(R.id.edtCalories);
         btnUpdate = findViewById(R.id.btnUpdate);
         String userRole = SessionManager.getInstance(this).getUserRole();
 
@@ -79,8 +85,34 @@ public class DetailFoodActivity extends AppCompatActivity {
     private void initDataToUI() {
         txtFoodName.setText(food.getNameViet());
         txtFoodNameClass.setText(food.getClassName());
-        txtFoodPrice.setText(food.getPrice()+"");
-        txtDescription.setText(food.getDescription());
+        if(food.getIngredients() != null){
+            txtIngredients.setText(
+                    "• " + TextUtils.join("\n• ", food.getIngredients())
+            );
+        }
+        if(food.getTips() != null){
+            txtTips.setText(
+                    "• " + TextUtils.join("\n• ", food.getTips())
+            );
+        }
+        if(food.getRecipe() != null){
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < food.getRecipe().size(); i++) {
+                sb.append(i + 1)
+                        .append(". ")
+                        .append(food.getRecipe().get(i))
+                        .append("\n\n");
+            }
+
+            txtRecipe.setText(sb.toString());
+        }
+
+
+        editPrice.setText(food.getPrice()+"");
+        editDescription.setText(food.getDescription());
+        editCalories.setText(food.getCalories()+"");
+        editCategory.setText(food.getCategory());
         Glide.with(this)
                 .load(food.getImageUrl())
                 .placeholder(R.drawable.ic_baseline_fastfood_24)
@@ -90,24 +122,34 @@ public class DetailFoodActivity extends AppCompatActivity {
     public void updateFood(){
         isUpdateMode = true;
         btnUpdate.setText("SAVE");
-        txtFoodPrice.setEnabled(isUpdateMode);
-        txtDescription.setEnabled(isUpdateMode);
+        editPrice.setEnabled(isUpdateMode);
+        editDescription.setEnabled(isUpdateMode);
+        editCalories.setEnabled(isUpdateMode);
+        editCategory.setEnabled(isUpdateMode);
     }
     public void saveUpdateFood(){
         isUpdateMode = false;
-        txtFoodPrice.setEnabled(isUpdateMode);
-        txtDescription.setEnabled(isUpdateMode);
+        editPrice.setEnabled(isUpdateMode);
+        editDescription.setEnabled(isUpdateMode);
+        editCalories.setEnabled(isUpdateMode);
+        editCategory.setEnabled(isUpdateMode);
 
         String description =
-                txtDescription.getText().toString().trim();
+                editDescription.getText().toString().trim();
+        String category =
+                editCategory.getText().toString().trim();
 
         int price =
                 Integer.parseInt(
-                        txtFoodPrice.getText().toString()
+                        editPrice.getText().toString()
+                );
+        int calories =
+                Integer.parseInt(
+                        editCalories.getText().toString()
                 );
 
-        if(!description.equals(food.getDescription()) || (price!=food.getPrice())){
-            callUpdateFood(description,price);
+        if(!description.equals(food.getDescription()) || (price!=food.getPrice()) || (calories!=food.getCalories()) || !category.equals(food.getCategory()) ){
+            callUpdateFood(description,price,calories,category);
         }
         else{
             Toast.makeText(
@@ -119,9 +161,11 @@ public class DetailFoodActivity extends AppCompatActivity {
         btnUpdate.setText("UPDATE");
 
     }
-    public void callUpdateFood(String description,int price){
+    public void callUpdateFood(String description,int price,int calories,String category){
         food.setDescription(description);
         food.setPrice(price);
+        food.setCalories(calories);
+        food.setCategory(category);
         FoodRepository.updateFood(food, new FoodRepository.SimpleCallback() {
             @Override
             public void onSuccess() {

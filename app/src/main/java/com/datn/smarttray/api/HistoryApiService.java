@@ -15,7 +15,7 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface HistoryApiService {
-    @GET("history")
+    @GET("history/all")
     Call<List<HistoryShortReponse>> getHistorys();
 
     @GET("history/{id}")

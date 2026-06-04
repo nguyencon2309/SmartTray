@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment {
                         );
                         Toast.makeText(
                                 requireContext(),
-                                "Đã chuyển sang Food 101",
+                                "Đã chuyển sang Food 102",
                                 Toast.LENGTH_SHORT
                         ).show();
                     }else{
@@ -82,7 +82,7 @@ public class HomeFragment extends Fragment {
     }
     private void setTextSwitch(boolean status){
         if(status){
-            switchModel.setText("Food 101 ");
+            switchModel.setText("Food 102 ");
         }
         else{
             switchModel.setText("Food 40 ");

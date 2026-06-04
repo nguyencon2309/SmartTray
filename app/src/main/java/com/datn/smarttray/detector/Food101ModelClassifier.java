@@ -19,14 +19,14 @@ import java.util.List;
 public class Food101ModelClassifier implements FoodClassifier{
     private int INPUT_SIZE = 224; // EfficientNet-B0 thường dùng 224x224
     private Interpreter tflite;
-    private int sizeFoodList = 101;
+    private int sizeFoodList = 102;
     private float THRESHOLD ;
     //private List<String> labels;
 
     public Food101ModelClassifier(Context context, String modelPath, int sizeFoodList) throws IOException {
         this.tflite = new Interpreter(loadModelFile(context.getAssets(),modelPath));
         this.sizeFoodList = sizeFoodList;
-        //labels = LabelUtils.loadLabelList(context,"labels_101.txt");
+
     }
     public void setThreshold(float threshold){this.THRESHOLD=threshold;}
     public float getThreshold(){return THRESHOLD;}
