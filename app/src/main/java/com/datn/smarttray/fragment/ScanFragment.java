@@ -47,6 +47,7 @@ import com.datn.smarttray.detector.FoodClassifier;
 import com.datn.smarttray.detector.YOLOv11Detector;
 import com.datn.smarttray.manager.ModelManager;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.FoodShortReponse;
 import com.datn.smarttray.model.History;
 import com.datn.smarttray.repository.FoodRepository;
 import com.datn.smarttray.repository.HistoryRepository;
@@ -85,7 +86,7 @@ public class ScanFragment extends Fragment {
     InvoiceFragment invoiceFragment;
 
     FrameLayout invoiceContainer;
-    List<Food> listFood;
+    List<FoodShortReponse> listFood;
     List<InvoiceItem> danhSachInvoice;
 
     ImageButton btnSetting,galleryBtn, cameraBtn;
@@ -589,22 +590,22 @@ public class ScanFragment extends Fragment {
         copy_image_bitmap = null;
         setButtonPredict();
     }
-    private String saveImage(Bitmap bitmap){
-        Bitmap resized =
-                Bitmap.createScaledBitmap(
-                        bitmap,
-                        600,
-                        600,
-                        true
-                );
-        String path =
-                ImageStorageUtil.saveBitmap(
-                        requireContext(),
-                        resized
-                );
-        resized = null;
-        return path;
-    }
+//    private String saveImage(Bitmap bitmap){
+//        Bitmap resized =
+//                Bitmap.createScaledBitmap(
+//                        bitmap,
+//                        600,
+//                        600,
+//                        true
+//                );
+//        String path =
+//                ImageStorageUtil.saveBitmap(
+//                        requireContext(),
+//                        resized
+//                );
+//        resized = null;
+//        return path;
+//    }
     private void showHidenLayoutSetting(){
         if(layoutSetting.getVisibility() == View.GONE){
             layoutSetting.setVisibility(View.VISIBLE);

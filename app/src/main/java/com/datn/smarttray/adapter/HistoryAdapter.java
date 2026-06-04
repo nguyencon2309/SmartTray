@@ -14,6 +14,8 @@ import com.bumptech.glide.Glide;
 import com.datn.smarttray.R;
 
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.model.HistoryShortReponse;
+import com.datn.smarttray.utils.GetLocalTime;
 
 import java.io.File;
 import java.util.List;
@@ -22,19 +24,19 @@ import java.util.List;
 public class HistoryAdapter
         extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
-    private List<History> historyList;
+    private List<HistoryShortReponse> historyList;
 
     private final OnHistoryClickListener listener;
 
     public interface OnHistoryClickListener {
 
-        void onHistoryClick(History history);
+        void onHistoryClick(HistoryShortReponse history);
 
-        void onDeleteClick(History history);
+        void onDeleteClick(HistoryShortReponse history);
 
     }
 
-    public HistoryAdapter(List<History> historyList,OnHistoryClickListener listener) {
+    public HistoryAdapter(List<HistoryShortReponse> historyList,OnHistoryClickListener listener) {
         this.historyList = historyList;
         this.listener = listener;
     }
@@ -62,19 +64,19 @@ public class HistoryAdapter
             int position
     ) {
 
-        History history = historyList.get(position);
+        HistoryShortReponse historyShort = historyList.get(position);
 
         holder.txtSumPrice.setText(
-                history.getSumPrice() + " VNĐ"
+                historyShort.getSumPrice() + " VNĐ"
         );
 
         holder.txtQuanlityFood.setText(
-                history.getQuanlityFood() + " Món ăn"
+                historyShort.getQuanlityFood() + " Món ăn"
         );
         holder.txtTime.setText(
-                history.getLocalTime()
+                GetLocalTime.getLocalTime(historyShort.getTimestamp())
         );
-        String imagePath = history.getImagePredict();
+        String imagePath = historyShort.getImage();
 
         if(imagePath == null || imagePath.isEmpty()){
 
@@ -93,13 +95,13 @@ public class HistoryAdapter
         }
         holder.itemView.setOnClickListener(v -> {
 
-            listener.onHistoryClick(history);
+            listener.onHistoryClick(historyShort);
 
         });
 
         holder.btnDelete.setOnClickListener(v -> {
 
-            listener.onDeleteClick(history);
+            listener.onDeleteClick(historyShort);
 
         });
 

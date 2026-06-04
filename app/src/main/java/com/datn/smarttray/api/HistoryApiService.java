@@ -1,6 +1,7 @@
 package com.datn.smarttray.api;
 
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.model.HistoryShortReponse;
 
 import java.util.List;
 import okhttp3.MultipartBody;
@@ -15,7 +16,7 @@ import retrofit2.http.Path;
 
 public interface HistoryApiService {
     @GET("history")
-    Call<List<History>> getHistorys();
+    Call<List<HistoryShortReponse>> getHistorys();
 
     @GET("history/{id}")
     Call<History> getHistoryById(

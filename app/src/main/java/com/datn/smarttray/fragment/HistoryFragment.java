@@ -16,6 +16,7 @@ import com.datn.smarttray.DetailHistoryActivity;
 import com.datn.smarttray.R;
 import com.datn.smarttray.adapter.HistoryAdapter;
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.model.HistoryShortReponse;
 import com.datn.smarttray.repository.HistoryRepository;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class HistoryFragment extends Fragment {
 
 
     RecyclerView recyclerHistory;
-    List<History> historyList;
+    List<HistoryShortReponse> historyList;
     HistoryAdapter adapter;
 
     public HistoryFragment() {
@@ -68,13 +69,13 @@ public class HistoryFragment extends Fragment {
                 new HistoryAdapter.OnHistoryClickListener() {
 
                     @Override
-                    public void onHistoryClick(History history) {
+                    public void onHistoryClick(HistoryShortReponse history) {
 
                         openDetailHistory(history);
                     }
 
                     @Override
-                    public void onDeleteClick(History history) {
+                    public void onDeleteClick(HistoryShortReponse history) {
 
                         deleteHistory(history);
                     }
@@ -87,7 +88,7 @@ public class HistoryFragment extends Fragment {
 
         recyclerHistory.setAdapter(adapter);
     }
-    private void openDetailHistory(History history) {
+    private void openDetailHistory(HistoryShortReponse history) {
         Intent intent =
                 new Intent(
                         requireContext(),
@@ -99,14 +100,14 @@ public class HistoryFragment extends Fragment {
         );
         startActivity(intent);
     }
-    private void deleteHistory(History history) {
-        if(history.getImagePredict() != null){
-            File file =
-                    new File(history.getImagePredict());
-            if(file.exists()){
-                file.delete();
-            }
-        }
+    private void deleteHistory(HistoryShortReponse history) {
+//        if(history.getImagePredict() != null){
+//            File file =
+//                    new File(history.getImagePredict());
+//            if(file.exists()){
+//                file.delete();
+//            }
+//        }
         //HistoryManager.deleteHistory(requireContext(),history);
 
         HistoryRepository.deleteHistory(history.getId(), new HistoryRepository.SimpleCallback(){

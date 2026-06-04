@@ -1,20 +1,22 @@
 package com.datn.smarttray.model;
 
-import android.graphics.Bitmap;
+
 
 import com.datn.smarttray.utils.InvoiceItem;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class History implements Serializable {
 
+    @SerializedName("imagePredict")
     public String imagePredict;
+    @SerializedName("timestamp")
     public long timestamp;
+    @SerializedName("id")
     public String id;
+    @SerializedName("listInvoice")
     public List<InvoiceItem> listInvoice;
     public History(String imagePredict,long timestamp, List<InvoiceItem> listInvoice ){
         this.id=String.valueOf(timestamp);
@@ -42,23 +44,5 @@ public class History implements Serializable {
         return imagePredict;
     }
 
-    public int getQuanlityFood() {
-        return listInvoice.size();
-    }
-
-
-    public String getLocalTime(){
-        SimpleDateFormat sdf =
-                new SimpleDateFormat(
-                        "dd/MM/yyyy HH:mm",
-                        Locale.getDefault()
-                );
-
-        String time =
-                sdf.format(
-                        new Date(timestamp)
-                );
-        return time;
-    }
 }
 

@@ -1,6 +1,7 @@
 package com.datn.smarttray.api;
 
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.FoodShortReponse;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import retrofit2.http.Path;
 public interface FoodApiService {
 
     @GET("{collection}")
-    Call<List<Food>> getFoods(
+    Call<List<FoodShortReponse>> getFoods(
             @Path("collection") String collection
     );
 

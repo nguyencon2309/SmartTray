@@ -6,6 +6,7 @@ import com.datn.smarttray.api.ApiClient;
 import com.datn.smarttray.api.HistoryApiService;
 import com.datn.smarttray.model.Food;
 import com.datn.smarttray.model.History;
+import com.datn.smarttray.model.HistoryShortReponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import retrofit2.Response;
 
 public class HistoryRepository {
 
-    private static final List<History> historyList = new ArrayList<>();
+    private static final List<HistoryShortReponse> historyList = new ArrayList<>();
     private static boolean isLoaded = false;
     private static final HistoryApiService api =
             ApiClient.getHistoryApi();
@@ -33,11 +34,11 @@ public class HistoryRepository {
         Log.d("API_DEBUG", "CALL API START");
 
         api.getHistorys()
-                .enqueue(new Callback<List<History>>() {
+                .enqueue(new Callback<List<HistoryShortReponse>>() {
                     @Override
                     public void onResponse(
-                            Call<List<History>> call,
-                            Response<List<History>> response
+                            Call<List<HistoryShortReponse>> call,
+                            Response<List<HistoryShortReponse>> response
                     ) {
                         Log.d(
                                 "API_DEBUG",
@@ -70,7 +71,7 @@ public class HistoryRepository {
 
                     @Override
                     public void onFailure(
-                            Call<List<History>> call,
+                            Call<List<HistoryShortReponse>> call,
                             Throwable t
                     ) {
                         Log.e(
@@ -122,19 +123,19 @@ public class HistoryRepository {
                     }
                 });
     }
-    public static History getHistoryLocalById( String id )
-    {
-        for(History history : historyList)
-        {
-            if(history.getId().equals(id))
-            {
-                return history;
-            }
-        }
-        return null;
-    }
+//    public static History getHistoryLocalById( String id )
+//    {
+//        for(History history : historyList)
+//        {
+//            if(history.getId().equals(id))
+//            {
+//                return history;
+//            }
+//        }
+//        return null;
+//    }
 
-    public static List<History> getCachedHistory()
+    public static List<HistoryShortReponse> getCachedHistory()
     {
         return historyList;
     }
@@ -165,7 +166,7 @@ public class HistoryRepository {
                 if(response.isSuccessful()){
                     refreshHistory(new HistoryCallback() {
                         @Override
-                        public void onSuccess(List<History> historys) {
+                        public void onSuccess(List<HistoryShortReponse> historys) {
                             callback.onSuccess();
                         }
 
@@ -250,7 +251,7 @@ public class HistoryRepository {
 
     public interface HistoryCallback {
 
-        void onSuccess(List<History> historys);
+        void onSuccess(List<HistoryShortReponse> historys);
 
         void onError(String error);
     }

@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.datn.smarttray.model.History;
 import com.datn.smarttray.repository.HistoryRepository;
+import com.datn.smarttray.utils.GetLocalTime;
 
 import java.io.File;
 
@@ -18,6 +20,7 @@ public class DetailHistoryActivity extends AppCompatActivity {
 
     TextView txtTime;
     InvoiceFragment invoiceFragment;
+    History history;
 
 
 
@@ -38,25 +41,33 @@ public class DetailHistoryActivity extends AppCompatActivity {
          */
         String historyId =
                 getIntent().getStringExtra("history_id");
-        History history =
-                HistoryRepository.getHistoryLocalById(historyId);
+        HistoryRepository.getHistoryById(historyId, new HistoryRepository.SingleHistoryCallback() {
+            @Override
+            public void onSuccess(History history1) {
+                history = history1;
+                initDataToUI();
+            }
 
-        if(history == null) {
+            @Override
+            public void onError(String error) {
+                Toast.makeText(DetailHistoryActivity.this, "Không thể tải dữ liệu: " + error, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
 
-            finish();
 
-            return;
-        }
+
+
+    }
+    private void initDataToUI(){
         invoiceFragment.updateInvoice(history.getListInvoice());
 
-        txtTime.setText(history.getLocalTime());
+        txtTime.setText(GetLocalTime.getLocalTime(history.getTimestamp()));
         Glide.with(this)
                 .load(history.getImagePredict())
                 .placeholder(R.drawable.ic_baseline_fastfood_24)
                 .error(R.drawable.ic_baseline_fastfood_24)
                 .into(imgPredict);
-
-
     }
     private void initInvoiceFragment() {
 

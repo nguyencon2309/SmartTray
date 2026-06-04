@@ -1,12 +1,19 @@
 package com.datn.smarttray.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Food {
-    public String id;
-    public String className;
-    public String nameViet;
-    public int price;
-    public String description;
-    public String image;
+    @SerializedName("id")
+    private String id;
+    @SerializedName("nameViet")
+    private String nameViet;
+    @SerializedName("price")
+    private int price;
+    @SerializedName("image")
+    private String image;
+    @SerializedName("description")
+    private String description;
+    private String className;
 
     // BẮT BUỘC CHO FIREBASE
     public Food() {

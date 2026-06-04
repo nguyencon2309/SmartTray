@@ -12,21 +12,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.datn.smarttray.R;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.FoodShortReponse;
 
 import java.util.List;
 
 public class FoodAdapter
         extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
 
-    private List<Food> foodList;
+    private List<FoodShortReponse> foodList;
     private OnFoodClickListener listener;
     public interface OnFoodClickListener{
 
-        void onFoodClick(Food food);
+        void onFoodClick(FoodShortReponse food);
 
     }
 
-    public FoodAdapter(List<Food> foodList,OnFoodClickListener listener) {
+    public FoodAdapter(List<FoodShortReponse> foodList,OnFoodClickListener listener) {
         this.foodList = foodList;
         this.listener = listener;
     }
@@ -54,16 +55,16 @@ public class FoodAdapter
             int position
     ) {
 
-        Food food = foodList.get(position);
+        FoodShortReponse foodshort = foodList.get(position);
 
         holder.txtFoodName.setText(
-                food.getNameViet()
+                foodshort.getNameViet()
         );
 
         holder.txtFoodPrice.setText(
-                food.getPrice() + " VNĐ"
+                foodshort.getPrice() + " VNĐ"
         );
-        String imageUrl = food.getImageUrl();
+        String imageUrl = foodshort.getImage();
 
         if (imageUrl == null
                 || imageUrl.isEmpty()
@@ -82,7 +83,7 @@ public class FoodAdapter
                     .into(holder.imgFood);
         }
         holder.itemView.setOnClickListener(v->{
-            listener.onFoodClick(food);
+            listener.onFoodClick(foodshort);
         });
 
     }

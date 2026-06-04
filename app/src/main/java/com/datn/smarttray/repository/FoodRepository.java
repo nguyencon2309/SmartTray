@@ -10,6 +10,7 @@ import com.datn.smarttray.api.FoodApiService;
 import com.datn.smarttray.enums.ModelType;
 import com.datn.smarttray.manager.AppConfigManager;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.FoodShortReponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import retrofit2.Response;
 
 public class FoodRepository {
     private static final FoodApiService api =ApiClient.getFoodApi();
-    private static final List<Food> foodList = new ArrayList<>();
+    private static final List<FoodShortReponse> foodList = new ArrayList<>();
     private static boolean isLoaded = false;
     private static String getCollectionName() {
 
@@ -37,12 +38,12 @@ public class FoodRepository {
         }
         Log.d("API_DEBUG", "CALL API START");
         api.getFoods(getCollectionName())
-                .enqueue(new Callback<List<Food>>() {
+                .enqueue(new Callback<List<FoodShortReponse>>() {
 
                     @Override
                     public void onResponse(
-                            Call<List<Food>> call,
-                            Response<List<Food>> response
+                            Call<List<FoodShortReponse>> call,
+                            Response<List<FoodShortReponse>> response
                     ) {
                         Log.d(
                                 "API_DEBUG",
@@ -73,7 +74,7 @@ public class FoodRepository {
                     }
                     @Override
                     public void onFailure(
-                            Call<List<Food>> call,
+                            Call<List<FoodShortReponse>> call,
                             Throwable t
                     ) {
                         Log.e(
@@ -90,23 +91,24 @@ public class FoodRepository {
     {   isLoaded = false;
         getFoods(callback);
     }
-    public static List<Food> getCachedFoods()
+    public static List<FoodShortReponse> getCachedFoods()
     {
         return foodList;
     }
-    public static Food getFoodLocalById( String id )
-    {
-        for(Food food : foodList)
-            { if(food.getId().equals(id))
-                { return food; }
-            }
-        return null;
-    }
+//    public static Food getFoodLocalById( String id )
+//    {
+//        for(Food food : foodList)
+//            { if(food.getId().equals(id))
+//                { return food; }
+//            }
+//        return null;
+//    }
 
     public static void getFoodById(
             String id,
             SingleFoodCallback callback
     ){
+        Log.d("API_DEBUG", "CALL API START");
 
         api.getFoodById(getCollectionName(),id)
                 .enqueue(new Callback<Food>() {
@@ -116,12 +118,30 @@ public class FoodRepository {
                             Call<Food> call,
                             Response<Food> response
                     ) {
+                        Log.d(
+                                "API_DEBUG",
+                                "CODE: " + response.code()
+                        );
+
+                        Log.d(
+                                "API_DEBUG",
+                                "BODY NULL: " + (response.body() == null)
+                        );
 
                         if(response.isSuccessful()
                                 && response.body() != null){
-
+                            Log.d(
+                                    "API_DEBUG",
+                                    "SIZE: " + response.body()
+                            );
                             callback.onSuccess(
                                     response.body()
+                            );
+                        }
+                        else{
+                            Log.e(
+                                    "API_DEBUG",
+                                    "RESPONSE FAIL"
                             );
                         }
                     }
@@ -131,6 +151,10 @@ public class FoodRepository {
                             Call<Food> call,
                             Throwable t
                     ) {
+                        Log.e(
+                                "API_DEBUG",
+                                "FAIL: " + t.getMessage()
+                        );
 
                         callback.onError(
                                 t.getMessage()
@@ -166,11 +190,12 @@ public class FoodRepository {
                             "API_UPDATE",
                             "UPDATE SUCCESS"
                     );
+
                     for(int i = 0; i < foodList.size(); i++)
                     {
                         if(foodList.get(i).getId().equals(food.getId()))
                         {
-                            foodList.set(i, food);
+                            foodList.get(i).setPrice(food.getPrice());
                             break;
                         }
                     }
@@ -220,7 +245,7 @@ public class FoodRepository {
 
     public interface FoodCallback {
 
-        void onSuccess(List<Food> foods);
+        void onSuccess(List<FoodShortReponse> foods);
 
         void onError(String error);
     }

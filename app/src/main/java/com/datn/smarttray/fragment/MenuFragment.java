@@ -7,14 +7,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.datn.smarttray.DetailFoodActivity;
 import com.datn.smarttray.R;
 import com.datn.smarttray.adapter.FoodAdapter;
 import com.datn.smarttray.model.Food;
+import com.datn.smarttray.model.FoodShortReponse;
 import com.datn.smarttray.repository.FoodRepository;
 
 import java.util.List;
@@ -28,7 +31,7 @@ public class MenuFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     RecyclerView recyclerFood;
-    List<Food> foodList;
+    List<FoodShortReponse> foodList;
     FoodAdapter adapter;
 
     @Override
@@ -65,7 +68,7 @@ public class MenuFragment extends Fragment {
                 foodList,
                 new FoodAdapter.OnFoodClickListener() {
                     @Override
-                    public void onFoodClick(Food food) {
+                    public void onFoodClick(FoodShortReponse food) {
                         openDetailFood(food);
                     }
                 }
@@ -77,7 +80,20 @@ public class MenuFragment extends Fragment {
 
         recyclerFood.setAdapter(adapter);
     }
-    public void openDetailFood(Food food){
+    public void openDetailFood(FoodShortReponse food){
+        if (food == null) {
+            Toast.makeText(requireContext(), "Dữ liệu món ăn bị rỗng!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 🌟 1. Log thử xem ID của món ăn lấy từ Backend về có bị null hoặc rỗng không
+        Log.d("DEBUG_DETAIL", "Click vào món: " + food.getNameViet() + " | ID nhận được = " + food.getId());
+
+        // 🌟 2. Đặt bảo hiểm: Nếu ID bị null, chặn lại luôn không cho mở màn hình Detail để tránh gây sập Retrofit
+        if (food.getId() == null || food.getId().isEmpty()) {
+            Toast.makeText(requireContext(), "Món ăn này không có ID hợp lệ trên database!", Toast.LENGTH_LONG).show();
+            return;
+        }
         Intent intent =
                 new Intent(
                         requireContext(),
